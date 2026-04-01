@@ -1,242 +1,32 @@
 <!DOCTYPE html>
-
 <html lang="sv">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1"/>
-<meta name="theme-color" content="#060a1f"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="GYMISH"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>GYMISH</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-::-webkit-scrollbar{display:none}
-body{background:#060a1f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-input,textarea,button,select{font-family:inherit}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#060a1f;color:#fff;font-family:-apple-system,sans-serif;padding:20px 16px 100px}
+h1{font-size:26px;margin-bottom:20px}
+.c{background:rgba(255,255,255,0.05);border-radius:18px;border:1px solid rgba(255,255,255,0.1);padding:14px 16px;margin-bottom:12px}
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js"></script>
-<script type="text/babel">
-const{useState,useEffect,useCallback,useRef}=React;
-
-const C={bg:”#060a1f”,card:“rgba(255,255,255,0.04)”,border:“rgba(255,255,255,0.08)”,text:”#fff”,muted:“rgba(255,255,255,0.5)”,subtle:“rgba(255,255,255,0.35)”,cyan:”#00d4ff”,green:”#00ff88”,orange:”#ff6b00”,purple:”#8b5cf6”};
-
-const PHASES={”+”:{l:“STYRKA”,d:“5–8 reps • 2–3 min vila”,c:C.cyan},”++”:{l:“HYPERTROFI”,d:“8–12 reps • 60–90s vila”,c:C.green},”+++”:{l:“PUMP & VOLYM”,d:“12–20+ reps • 30–45s vila”,c:C.orange},“D”:{l:“DELOAD”,d:“50% vikt • teknik”,c:C.purple}};
-
-const DAYS=[{d:“Sön”,l:“Bröst + Sido”,t:“60 min”,i:“🏋️”},{d:“Mån”,l:“Rygg + Biceps”,t:“30 min”,i:“💪”},{d:“Tis”,l:“Ben + Axlar”,t:“60 min”,i:“🦵”,a:true},{d:“Ons”,l:“Armar + MMA”,t:“30 min”,i:“🥊”},{d:“Tor”,l:“Rygg Tungt”,t:“60 min”,i:“🔥”},{d:“Fre”,l:“Axlar + Tri”,t:“30 min”,i:“⚡”},{d:“Lör”,l:“Svaga Punkter”,t:“60 min”,i:“🎯”}];
-
-const EXS=[{n:“Knäböj”,s:“4×10”,w:“90 kg”,done:2,tot:4},{n:“Rumänsk marklyft”,s:“3×10”,w:“80 kg”,done:0,tot:3},{n:“Walking lunges”,s:“3×12/ben”,w:“20 kg”,done:0,tot:3},{n:“Leg extension”,s:“3×12”,w:“55 kg”,done:0,tot:3},{n:“Arnold press”,s:“3×10”,w:“18 kg”,done:0,tot:3},{n:“Lateral raises”,s:“5×12”,w:“10 kg”,done:0,tot:5},{n:“Rear delt flyes”,s:“3×15”,w:“8 kg”,done:0,tot:3}];
-
-const PRS=[{n:“Bänkpress”,p:“100 kg”,d:“12 mar”},{n:“Knäböj”,p:“120 kg”,d:“5 mar”},{n:“Marklyft”,p:“140 kg”,d:“28 feb”},{n:“OHP”,p:“60 kg”,d:“21 feb”}];
-
-function GC({children,style,onClick,glow}){
-return <div onClick={onClick} style={{background:C.card,backdropFilter:“blur(20px)”,WebkitBackdropFilter:“blur(20px)”,borderRadius:18,border:“1px solid “+C.border,padding:“14px 16px”,marginBottom:10,boxShadow:glow?“0 0 25px “+glow+“22”:“none”,…style}}>{children}</div>;
-}
-
-function Ring({sz,pr,col,children}){
-var r=(sz-5)/2,circ=2*Math.PI*r,off=circ-(pr/100)*circ;
-return <div style={{position:“relative”,width:sz,height:sz}}>
-<svg width={sz} height={sz} style={{transform:“rotate(-90deg)”}}><circle cx={sz/2} cy={sz/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={5}/><circle cx={sz/2} cy={sz/2} r={r} fill="none" stroke={col} strokeWidth={5} strokeDasharray={circ} strokeDashoffset={off} strokeLinecap="round"/></svg>
-<div style={{position:“absolute”,inset:0,display:“flex”,alignItems:“center”,justifyContent:“center”,flexDirection:“column”}}>{children}</div>
-
-  </div>;
-}
-
-function HomeTab(){
-var ph=PHASES[”++”];
-return <>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”,marginBottom:24}}>
-<div>
-<p style={{fontSize:13,color:C.subtle,letterSpacing:1}}>TISDAG 1 APRIL</p>
-<h1 style={{fontSize:26,fontWeight:700,marginTop:4}}>Hej KM 👋</h1>
+<p style="font-size:13px;color:rgba(255,255,255,0.4)">TISDAG 1 APRIL</p>
+<h1>Hej KM 👋</h1>
+<div class="c" style="border-color:rgba(0,255,136,0.2);box-shadow:0 0 20px rgba(0,255,136,0.1)">
+<span style="font-size:11px;font-weight:700;color:#00ff88">VECKA 2 / 4 — HYPERTROFI ++</span>
+<p style="font-size:17px;font-weight:700;margin-top:4px">8-12 reps • 60-90s vila</p>
 </div>
+<div class="c">
+<p style="font-size:10px;color:rgba(255,255,255,0.5);letter-spacing:1px">DAGENS PASS</p>
+<h2 style="font-size:20px;margin-top:4px">🦵 Ben + Axlar</h2>
+<p style="font-size:12px;color:rgba(255,255,255,0.5);margin-top:3px">60 min • 7 ovningar</p>
 </div>
-
-```
-<GC glow={ph.c} style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-  <div>
-    <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:4}}>
-      <span style={{fontSize:11,fontWeight:700,color:ph.c,letterSpacing:2}}>VECKA 2 / 4</span>
-      <span style={{fontSize:10,background:ph.c+"22",color:ph.c,padding:"2px 8px",borderRadius:20}}>++</span>
-    </div>
-    <p style={{fontSize:17,fontWeight:700}}>{ph.l}</p>
-    <p style={{fontSize:11,color:C.muted,marginTop:2}}>{ph.d}</p>
-  </div>
-  <Ring sz={56} pr={50} col={ph.c}><span style={{fontSize:15,fontWeight:700}}>2</span><span style={{fontSize:7,color:C.muted}}>/ 4</span></Ring>
-</GC>
-
-<GC style={{padding:0,overflow:"hidden",marginBottom:16}}>
-  <div style={{background:"linear-gradient(135deg,rgba(0,212,255,0.12),rgba(0,255,136,0.06))",padding:"18px 16px 14px"}}>
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-      <div>
-        <p style={{fontSize:10,color:C.muted,letterSpacing:1.5,fontWeight:600}}>DAGENS PASS</p>
-        <h2 style={{fontSize:20,fontWeight:700,marginTop:4}}>🦵 Ben + Axlar</h2>
-        <p style={{fontSize:12,color:C.muted,marginTop:3}}>60 min • 7 övningar</p>
-      </div>
-      <Ring sz={64} pr={8} col={C.cyan}><span style={{fontSize:16,fontWeight:800}}>8%</span></Ring>
-    </div>
-  </div>
-  <div style={{padding:"12px 16px"}}>
-    <button style={{width:"100%",padding:13,borderRadius:14,background:"linear-gradient(135deg,#00d4ff,#0088cc)",border:"none",color:"#fff",fontSize:15,fontWeight:700,boxShadow:"0 4px 20px rgba(0,212,255,0.3)",cursor:"pointer"}}>▶ Starta pass</button>
-  </div>
-</GC>
-
-<div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:18}}>
-  {[{l:"Pass/vecka",v:"5"},{l:"Volym",v:"42t"},{l:"Streak",v:"12"}].map(function(x,i){return <GC key={i} style={{textAlign:"center",padding:12}}><p style={{fontSize:20,fontWeight:800,color:C.cyan}}>{x.v}</p><p style={{fontSize:9,color:C.subtle,marginTop:2}}>{x.l}</p></GC>})}
-</div>
-
-<p style={{fontSize:12,fontWeight:600,color:C.subtle,letterSpacing:1,marginBottom:8}}>VECKANS PASS</p>
-<div style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:6,marginBottom:20}}>
-  {DAYS.map(function(d,i){return <div key={i} style={{minWidth:54,padding:"8px 0",borderRadius:14,textAlign:"center",background:d.a?"linear-gradient(180deg,rgba(0,212,255,0.2),rgba(0,212,255,0.05))":"rgba(255,255,255,0.03)",border:d.a?"1px solid rgba(0,212,255,0.3)":"1px solid rgba(255,255,255,0.05)"}}>
-    <p style={{fontSize:9,color:d.a?C.cyan:C.subtle,fontWeight:600}}>{d.d}</p>
-    <p style={{fontSize:18,margin:"4px 0 2px"}}>{d.i}</p>
-    <p style={{fontSize:8,color:"rgba(255,255,255,0.4)"}}>{d.t}</p>
-  </div>})}
-</div>
-
-<p style={{fontSize:12,fontWeight:600,color:C.subtle,letterSpacing:1,marginBottom:8}}>🏆 SENASTE PR</p>
-<GC>
-  {PRS.map(function(pr,i){return <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:i<PRS.length-1?"1px solid rgba(255,255,255,0.05)":"none"}}>
-    <span style={{fontSize:13}}>{pr.n}</span>
-    <div><span style={{fontSize:15,fontWeight:800,color:C.green}}>{pr.p}</span><span style={{fontSize:9,color:C.subtle,marginLeft:6}}>{pr.d}</span></div>
-  </div>})}
-</GC>
-```
-
-</>;
-}
-
-function WorkoutTab(){
-var [sel,setSel]=useState(null);
-return <>
-<p style={{fontSize:10,color:C.subtle,letterSpacing:1.5}}>AKTIVT PASS</p>
-<h1 style={{fontSize:24,fontWeight:700,margin:“4px 0”}}>🦵 Ben + Axlar</h1>
-<p style={{fontSize:12,color:C.green,marginBottom:20}}>++ HYPERTROFI • 8–12 reps • 60–90s</p>
-{EXS.map(function(e,i){
-var open=sel===i,pct=e.tot>0?Math.round((e.done/e.tot)*100):0;
-return <GC key={i} onClick={function(){setSel(open?null:i)}} style={{border:open?“1px solid rgba(0,212,255,0.25)”:“1px solid “+C.border,cursor:“pointer”}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”}}>
-<div>
-<span style={{fontSize:14,fontWeight:600}}>{e.n}</span>
-{e.done===e.tot&&e.done>0&&<span> ✅</span>}
-<p style={{fontSize:11,color:C.subtle,marginTop:2}}>{e.s} • Förra: {e.w}</p>
-</div>
-<Ring sz={38} pr={pct} col={pct===100?C.green:C.cyan}><span style={{fontSize:9,fontWeight:700}}>{e.done}/{e.tot}</span></Ring>
-</div>
-{open&&<div style={{marginTop:12,borderTop:“1px solid rgba(255,255,255,0.06)”,paddingTop:12}} onClick={function(ev){ev.stopPropagation()}}>
-{Array.from({length:e.tot}).map(function(_,s){
-var dn=s<e.done;
-return <div key={s} style={{display:“flex”,gap:6,marginBottom:7,alignItems:“center”,opacity:dn?0.5:1}}>
-<span style={{fontSize:11,color:C.subtle,width:22}}>S{s+1}</span>
-<button style={{flex:1,padding:9,borderRadius:10,background:dn?“rgba(0,255,136,0.1)”:“rgba(255,255,255,0.06)”,border:dn?“1px solid rgba(0,255,136,0.2)”:“1px solid rgba(255,255,255,0.08)”,color:”#fff”,fontSize:13,fontWeight:600,textAlign:“center”,cursor:“pointer”}}>{dn?e.w+” ✓”:e.w}</button>
-<button style={{flex:1,padding:9,borderRadius:10,background:dn?“rgba(0,255,136,0.1)”:“rgba(255,255,255,0.06)”,border:dn?“1px solid rgba(0,255,136,0.2)”:“1px solid rgba(255,255,255,0.08)”,color:”#fff”,fontSize:13,fontWeight:600,textAlign:“center”,cursor:“pointer”}}>{dn?“10 reps ✓”:“10 reps”}</button>
-{!dn&&<button style={{width:36,height:36,borderRadius:10,background:“linear-gradient(135deg,#00d4ff,#0088cc)”,border:“none”,color:”#fff”,fontSize:15,display:“flex”,alignItems:“center”,justifyContent:“center”,cursor:“pointer”}}>✓</button>}
-</div>;
-})}
-<div style={{marginTop:6,padding:“9px 12px”,borderRadius:12,background:“rgba(0,212,255,0.06)”,border:“1px solid rgba(0,212,255,0.15)”,display:“flex”,justifyContent:“space-between”}}>
-<span style={{fontSize:11,color:C.muted}}>⏱ Vila</span>
-<span style={{fontSize:17,fontWeight:800,color:C.cyan}}>1:30</span>
-</div>
-</div>}
-</GC>;
-})}
-</>;
-}
-
-function StatsTab(){
-var vols=[65,72,58,80,75,68,82],mx=Math.max.apply(null,vols),lbl=[“M”,“Ti”,“O”,“To”,“F”,“L”,“S”];
-return <>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:20}}>📊 Progression</h1>
-<GC>
-<p style={{fontSize:12,fontWeight:600,color:C.muted,marginBottom:12}}>VOLYM 7 PASS (ton)</p>
-<div style={{display:“flex”,alignItems:“flex-end”,gap:6,height:100}}>
-{vols.map(function(v,i){return <div key={i} style={{flex:1,display:“flex”,flexDirection:“column”,alignItems:“center”,gap:3}}>
-<span style={{fontSize:8,color:“rgba(255,255,255,0.4)”}}>{v}</span>
-<div style={{width:“100%”,height:(v/mx)*80+“px”,borderRadius:6,background:i===vols.length-1?“linear-gradient(180deg,#00d4ff,#0066aa)”:“linear-gradient(180deg,rgba(0,212,255,0.3),rgba(0,212,255,0.08))”}}></div>
-<span style={{fontSize:8,color:C.subtle}}>{lbl[i]}</span>
-</div>})}
-</div>
-</GC>
-<p style={{fontSize:12,fontWeight:600,color:C.subtle,letterSpacing:1,margin:“16px 0 8px”}}>FREKVENS / VECKA</p>
-<GC>
-{[{m:“Sido-delts”,f:6,t:6},{m:“Biceps”,f:4,t:6},{m:“Triceps”,f:4,t:6},{m:“Bröst”,f:2,t:6},{m:“Rygg”,f:2,t:6},{m:“Ben”,f:2,t:6}].map(function(x,i){return <div key={i} style={{display:“flex”,alignItems:“center”,gap:8,marginBottom:i<5?8:0}}>
-<span style={{fontSize:11,width:72,color:“rgba(255,255,255,0.6)”}}>{x.m}</span>
-<div style={{flex:1,height:7,borderRadius:4,background:“rgba(255,255,255,0.06)”}}><div style={{width:(x.f/x.t)*100+”%”,height:“100%”,borderRadius:4,background:“linear-gradient(90deg,#00ff88,#00cc66)”}}></div></div>
-<span style={{fontSize:10,fontWeight:700,color:C.green,width:26,textAlign:“right”}}>{x.f}x</span>
-</div>})}
-</GC>
-</>;
-}
-
-function BodyTab(){
-return <>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:20}}>💪 Kropp</h1>
-<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:8,marginBottom:16}}>
-{[{l:“Vikt”,v:“72.3”,u:“kg”,t:”+0.4”},{l:“Armar”,v:“38.5”,u:“cm”,t:”+0.3”},{l:“Midja”,v:“78”,u:“cm”,t:”-1.2”},{l:“Bröst”,v:“102”,u:“cm”,t:”+0.8”}].map(function(s,i){return <GC key={i} style={{textAlign:“center”,padding:“16px 12px”}}>
-<p style={{fontSize:10,color:C.subtle}}>{s.l}</p>
-<p style={{fontSize:26,fontWeight:800,marginTop:4}}>{s.v} <span style={{fontSize:13,color:C.subtle}}>{s.u}</span></p>
-<span style={{fontSize:11,fontWeight:600,color:C.green}}>{s.t} {s.u}</span>
-</GC>})}
-</div>
-<GC style={{textAlign:“center”,padding:“28px 16px”}}>
-<div style={{fontSize:36,marginBottom:8}}>📷</div>
-<p style={{fontSize:13,color:C.muted}}>Lägg till progress-bild</p>
-<button style={{marginTop:12,padding:“9px 22px”,borderRadius:12,background:“rgba(0,212,255,0.15)”,border:“1px solid rgba(0,212,255,0.3)”,color:C.cyan,fontSize:12,fontWeight:600,cursor:“pointer”}}>+ Ta foto</button>
-</GC>
-</>;
-}
-
-function ProgramTab(){
-return <>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:20}}>📋 Program</h1>
-<p style={{fontSize:12,fontWeight:600,color:C.subtle,letterSpacing:1,marginBottom:8}}>4-VECKORS CYKEL</p>
-<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:8,marginBottom:20}}>
-{[”+”,”++”,”+++”,“D”].map(function(p,i){
-var ph=PHASES[p],cur=p===”++”;
-return <GC key={i} glow={cur?ph.c:null} style={{border:cur?“1px solid “+ph.c+“44”:“1px solid “+C.border,position:“relative”}}>
-{cur&&<span style={{position:“absolute”,top:7,right:7,fontSize:8,fontWeight:700,background:ph.c+“33”,color:ph.c,padding:“2px 6px”,borderRadius:6}}>NU</span>}
-<span style={{fontSize:20,fontWeight:800,color:ph.c}}>{p}</span>
-<p style={{fontSize:12,fontWeight:600,marginTop:3}}>{ph.l}</p>
-<p style={{fontSize:9,color:C.subtle,marginTop:2}}>{ph.d}</p>
-</GC>;
-})}
-</div>
-<p style={{fontSize:12,fontWeight:600,color:C.subtle,letterSpacing:1,marginBottom:8}}>VECKOSCHEMA</p>
-{DAYS.map(function(d,i){return <GC key={i} style={{display:“flex”,alignItems:“center”,gap:12,padding:“12px 14px”,border:d.a?“1px solid rgba(0,212,255,0.2)”:“1px solid “+C.border}}>
-<div style={{width:40,height:40,borderRadius:10,background:d.a?“rgba(0,212,255,0.15)”:“rgba(255,255,255,0.04)”,display:“flex”,alignItems:“center”,justifyContent:“center”,fontSize:20}}>{d.i}</div>
-<div style={{flex:1}}><p style={{fontSize:13,fontWeight:600}}>{d.d} — {d.l}</p><p style={{fontSize:10,color:C.subtle,marginTop:1}}>{d.t}</p></div>
-{d.a&&<span style={{fontSize:8,color:C.cyan,fontWeight:700,letterSpacing:1}}>IDAG</span>}
-</GC>})}
-</>;
-}
-
-function App(){
-var [tab,setTab]=useState(“home”);
-var tabs=[{id:“home”,i:“🏠”,l:“Idag”},{id:“workout”,i:“🏋️”,l:“Pass”},{id:“stats”,i:“📊”,l:“Grafer”},{id:“body”,i:“💪”,l:“Kropp”},{id:“program”,i:“📋”,l:“Program”}];
-return <div style={{maxWidth:430,margin:“0 auto”,minHeight:“100vh”,background:“linear-gradient(165deg,#060a1f 0%,#0a1029 30%,#0d1535 60%,#091228 100%)”,position:“relative”}}>
-<div style={{padding:“20px 16px 100px”}}>
-{tab===“home”&&<HomeTab/>}
-{tab===“workout”&&<WorkoutTab/>}
-{tab===“stats”&&<StatsTab/>}
-{tab===“body”&&<BodyTab/>}
-{tab===“program”&&<ProgramTab/>}
-</div>
-<div style={{position:“fixed”,bottom:0,left:“50%”,transform:“translateX(-50%)”,width:“100%”,maxWidth:430,background:“rgba(6,10,31,0.95)”,backdropFilter:“blur(30px)”,WebkitBackdropFilter:“blur(30px)”,borderTop:“1px solid rgba(255,255,255,0.06)”,display:“flex”,justifyContent:“space-around”,padding:“8px 0 28px”,zIndex:10}}>
-{tabs.map(function(t){return <button key={t.id} onClick={function(){setTab(t.id);window.scrollTo(0,0)}} style={{background:“none”,border:“none”,color:tab===t.id?C.cyan:C.subtle,display:“flex”,flexDirection:“column”,alignItems:“center”,gap:3,fontSize:9,fontWeight:500,padding:“4px 10px”,cursor:“pointer”}}>
-<span style={{fontSize:20}}>{t.i}</span>{t.l}
-</button>})}
-</div>
-
-  </div>;
-}
-
-ReactDOM.createRoot(document.getElementById(“root”)).render(<App/>);
-</script>
-
+<div class="c"><p style="font-size:14px;font-weight:600">Knäböj</p><p style="font-size:11px;color:rgba(255,255,255,0.4)">4x10 • Förra: 90 kg</p></div>
+<div class="c"><p style="font-size:14px;font-weight:600">Rumänsk marklyft</p><p style="font-size:11px;color:rgba(255,255,255,0.4)">3x10 • Förra: 80 kg</p></div>
+<div class="c"><p style="font-size:14px;font-weight:600">Walking lunges</p><p style="font-size:11px;color:rgba(255,255,255,0.4)">3x12 • Förra: 20 kg</p></div>
+<div class="c"><p style="font-size:14px;font-weight:600">Arnold press</p><p style="font-size:11px;color:rgba(255,255,255,0.4)">3x10 • Förra: 18 kg</p></div>
+<div class="c"><p style="font-size:14px;font-weight:600">Lateral raises</p><p style="font-size:11px;color:rgba(255,255,255,0.4)">5x12 • Förra: 10 kg</p></div>
 </body>
 </html>
