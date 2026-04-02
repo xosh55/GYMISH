@@ -384,7 +384,6 @@ var lGym=data.lunchGym||{};
 var totalS=items.reduce(function(a,e){return a+e.sets},0);
 var doneS=0;items.forEach(function(e,ei){for(var si=0;si<e.sets;si++){if(lGym[ei+"_"+si])doneS++}});
 var allLD=doneS===totalS&&totalS>0;
-ue(function(){if(allLD&&!data.lunchDone)setData(function(d){return{...d,lunchDone:true}})},[allLD]);
 return <div>
 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
 <Ring sz={44} pr={totalS>0?Math.round(doneS/totalS*100):0} co={allLD?C.gr:C.pu}><span style={{fontSize:10,fontWeight:800}}>{doneS}/{totalS}</span></Ring>
@@ -404,7 +403,7 @@ return <GC key={ei} bc={exDone?"rgba(0,255,136,0.15)":C.b} sx={{opacity:exDone?0
 <div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
 {Array.from({length:e.sets},function(_,si){
 var sd=lGym[ei+"_"+si];var isEdit=editLuSet&&editLuSet.ei===ei&&editLuSet.si===si;
-if(isEdit)return <div key={si} style={{width:"100%"}}><SetInput setNum={si+1} targetReps={parseInt(e.reps)||15} lastKg={sd?sd.kg:(function(){for(var p=si-1;p>=0;p--){var ps=lGym[ei+"_"+p];if(ps)return ps.kg}return undefined})()} onSave={function(kg,reps){setData(function(d){var lg={...(d.lunchGym||{})};lg[ei+"_"+si]={kg:kg,reps:reps};return{...d,lunchGym:lg}});setEditLuSet(null)}} onCancel={function(){setEditLuSet(null)}}/></div>;
+if(isEdit)return <div key={si} style={{width:"100%"}}><SetInput setNum={si+1} targetReps={parseInt(e.reps)||15} lastKg={sd?sd.kg:(function(){for(var p=si-1;p>=0;p--){var ps=lGym[ei+"_"+p];if(ps)return ps.kg}return undefined})()} onSave={function(kg,reps){setData(function(d){var lg={...(d.lunchGym||{})};lg[ei+"_"+si]={kg:kg,reps:reps};var allDn=true;items.forEach(function(ex,eei){for(var ssi=0;ssi<ex.sets;ssi++){if(!lg[eei+"_"+ssi])allDn=false}});return{...d,lunchGym:lg,lunchDone:allDn}});setEditLuSet(null)}} onCancel={function(){setEditLuSet(null)}}/></div>;
 if(sd)return <button key={si} onClick={function(){setEditLuSet({ei:ei,si:si})}} style={{padding:"6px 10px",borderRadius:8,background:"rgba(0,255,136,0.08)",border:"1px solid rgba(0,255,136,0.15)",color:C.gr,fontSize:11,fontWeight:700,minWidth:56}}>{sd.kg>0?sd.kg+"kg×"+sd.reps:sd.reps+" reps"}</button>;
 return <button key={si} onClick={function(){setEditLuSet({ei:ei,si:si})}} style={{padding:"6px 10px",borderRadius:8,background:"rgba(139,92,246,0.08)",border:"1px solid rgba(139,92,246,0.2)",color:C.pu,fontSize:11,fontWeight:600,minWidth:56}}>Set {si+1}</button>})}
 </div></GC>})}
