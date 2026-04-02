@@ -5,11 +5,23 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1"/>
 <meta name="theme-color" content="#060a1f"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="GYMISH"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>"/>
 <title>GYMISH</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 ::-webkit-scrollbar{display:none}
-body{background:#060a1f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,sans-serif;overflow-x:hidden}
+html{scroll-behavior:smooth}
+body{background:#060a1f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+button:active{transform:scale(0.97);opacity:0.85}
+input:focus{border-color:rgba(0,212,255,0.4)!important;box-shadow:0 0 0 3px rgba(0,212,255,0.08)}
+input{transition:border-color .15s,box-shadow .15s}
 </style>
 </head>
 <body>
@@ -18,44 +30,826 @@ body{background:#060a1f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.4/babel.min.js"></script>
 <script type="text/babel">
-var h=React.useState;
-var C={cy:"#00d4ff",gr:"#00ff88",or:"#ff6b00",pu:"#8b5cf6",m:"rgba(255,255,255,0.5)",s:"rgba(255,255,255,0.35)",b:"rgba(255,255,255,0.08)"};
-var PH={"+":{l:"STYRKA",d:"5-8 reps • 2-3 min vila",c:C.cy},"++":{l:"HYPERTROFI",d:"8-12 reps • 60-90s vila",c:C.gr},"+++":{l:"PUMP & VOLYM",d:"12-20+ reps • 30-45s",c:C.or},"D":{l:"DELOAD",d:"50% vikt • teknik",c:C.pu}};
-var DAYS=[{d:"Sön",l:"Bröst+Sido",t:"60m",i:"🏋️"},{d:"Mån",l:"Rygg+Bi",t:"30m",i:"💪"},{d:"Tis",l:"Ben+Axlar",t:"60m",i:"🦵",a:true},{d:"Ons",l:"Armar+MMA",t:"30m",i:"🥊"},{d:"Tor",l:"Rygg Tungt",t:"60m",i:"🔥"},{d:"Fre",l:"Axlar+Tri",t:"30m",i:"⚡"},{d:"Lör",l:"Svaga P.",t:"60m",i:"🎯"}];
-var EXS=[{n:"Knäböj",s:"4×10",w:"90 kg",done:2,tot:4},{n:"Rumänsk marklyft",s:"3×10",w:"80 kg",done:0,tot:3},{n:"Walking lunges",s:"3×12",w:"20 kg",done:0,tot:3},{n:"Leg extension",s:"3×12",w:"55 kg",done:0,tot:3},{n:"Arnold press",s:"3×10",w:"18 kg",done:0,tot:3},{n:"Lateral raises",s:"5×12",w:"10 kg",done:0,tot:5},{n:"Rear delt flyes",s:"3×15",w:"8 kg",done:0,tot:3}];
-function GC(p){return <div onClick={p.onClick} style={{background:"rgba(255,255,255,0.04)",borderRadius:18,border:"1px solid "+(p.bc||C.b),padding:"14px 16px",marginBottom:10,boxShadow:p.gl?"0 0 25px "+p.gl+"22":"none",...(p.sx||{})}}>{p.children}</div>}
-function Ring(p){var r=(p.sz-5)/2,ci=2*Math.PI*r,o=ci-(p.pr/100)*ci;return <div style={{position:"relative",width:p.sz,height:p.sz}}><svg width={p.sz} height={p.sz} style={{transform:"rotate(-90deg)"}}><circle cx={p.sz/2} cy={p.sz/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={5}/><circle cx={p.sz/2} cy={p.sz/2} r={r} fill="none" stroke={p.co} strokeWidth={5} strokeDasharray={ci} strokeDashoffset={o} strokeLinecap="round"/></svg><div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>{p.children}</div></div>}
-function HomeTab(){var ph=PH["++"];return <>
-<div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:24}}><div><p style={{fontSize:13,color:C.s,letterSpacing:1}}>TISDAG 1 APRIL</p><h1 style={{fontSize:26,fontWeight:700,marginTop:4}}>Hej KM 👋</h1></div></div>
-<GC gl={ph.c} bc={ph.c+"33"} sx={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div><div style={{display:"flex",gap:8,alignItems:"center",marginBottom:4}}><span style={{fontSize:11,fontWeight:700,color:ph.c,letterSpacing:2}}>VECKA 2 / 4</span><span style={{fontSize:10,background:ph.c+"22",color:ph.c,padding:"2px 8px",borderRadius:20}}>++</span></div><p style={{fontSize:17,fontWeight:700}}>{ph.l}</p><p style={{fontSize:11,color:C.m,marginTop:2}}>{ph.d}</p></div><Ring sz={56} pr={50} co={ph.c}><span style={{fontSize:15,fontWeight:700}}>2</span><span style={{fontSize:7,color:C.m}}>/ 4</span></Ring></GC>
-<GC sx={{padding:0,overflow:"hidden",marginBottom:16}}><div style={{background:"linear-gradient(135deg,rgba(0,212,255,0.12),rgba(0,255,136,0.06))",padding:"18px 16px 14px"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><p style={{fontSize:10,color:C.m,letterSpacing:1.5,fontWeight:600}}>DAGENS PASS</p><h2 style={{fontSize:20,fontWeight:700,marginTop:4}}>🦵 Ben + Axlar</h2><p style={{fontSize:12,color:C.m,marginTop:3}}>60 min • 7 övningar</p></div><Ring sz={64} pr={8} co={C.cy}><span style={{fontSize:16,fontWeight:800}}>8%</span></Ring></div></div><div style={{padding:"12px 16px"}}><button style={{width:"100%",padding:13,borderRadius:14,background:"linear-gradient(135deg,#00d4ff,#0088cc)",border:"none",color:"#fff",fontSize:15,fontWeight:700,boxShadow:"0 4px 20px rgba(0,212,255,0.3)"}}>▶ Starta pass</button></div></GC>
-<div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:18}}>{[{l:"Pass/vecka",v:"5"},{l:"Volym",v:"42t"},{l:"Streak",v:"12"}].map(function(x,i){return <GC key={i} sx={{textAlign:"center",padding:12}}><p style={{fontSize:20,fontWeight:800,color:C.cy}}>{x.v}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>{x.l}</p></GC>})}</div>
-<p style={{fontSize:12,fontWeight:600,color:C.s,letterSpacing:1,marginBottom:8}}>VECKANS PASS</p>
-<div style={{display:"flex",gap:6,overflowX:"auto",paddingBottom:6,marginBottom:20}}>{DAYS.map(function(d,i){return <div key={i} style={{minWidth:54,padding:"8px 0",borderRadius:14,textAlign:"center",background:d.a?"linear-gradient(180deg,rgba(0,212,255,0.2),rgba(0,212,255,0.05))":"rgba(255,255,255,0.03)",border:d.a?"1px solid rgba(0,212,255,0.3)":"1px solid rgba(255,255,255,0.05)"}}><p style={{fontSize:9,color:d.a?C.cy:C.s,fontWeight:600}}>{d.d}</p><p style={{fontSize:18,margin:"4px 0 2px"}}>{d.i}</p><p style={{fontSize:8,color:"rgba(255,255,255,0.4)"}}>{d.t}</p></div>})}</div>
-<p style={{fontSize:12,fontWeight:600,color:C.s,letterSpacing:1,marginBottom:8}}>🏆 SENASTE PR</p>
-<GC>{[{n:"Bänkpress",p:"100 kg",d:"12 mar"},{n:"Knäböj",p:"120 kg",d:"5 mar"},{n:"Marklyft",p:"140 kg",d:"28 feb"},{n:"OHP",p:"60 kg",d:"21 feb"}].map(function(pr,i){return <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:i<3?"1px solid rgba(255,255,255,0.05)":"none"}}><span style={{fontSize:13}}>{pr.n}</span><div><span style={{fontSize:15,fontWeight:800,color:C.gr}}>{pr.p}</span><span style={{fontSize:9,color:C.s,marginLeft:6}}>{pr.d}</span></div></div>})}</GC></>}
-function WorkoutTab(){var s=h(null),sel=s[0],setSel=s[1];return <>
-<p style={{fontSize:10,color:C.s,letterSpacing:1.5}}>AKTIVT PASS</p>
-<h1 style={{fontSize:24,fontWeight:700,margin:"4px 0"}}>🦵 Ben + Axlar</h1>
-<p style={{fontSize:12,color:C.gr,marginBottom:20}}>++ HYPERTROFI • 8-12 reps • 60-90s</p>
-{EXS.map(function(e,i){var open=sel===i,pct=e.tot>0?Math.round((e.done/e.tot)*100):0;return <GC key={i} onClick={function(){setSel(open?null:i)}} bc={open?"rgba(0,212,255,0.25)":C.b} sx={{cursor:"pointer"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><div><span style={{fontSize:14,fontWeight:600}}>{e.n}</span>{e.done===e.tot&&e.done>0&&<span> ✅</span>}<p style={{fontSize:11,color:C.s,marginTop:2}}>{e.s} • Förra: {e.w}</p></div><Ring sz={38} pr={pct} co={pct===100?C.gr:C.cy}><span style={{fontSize:9,fontWeight:700}}>{e.done}/{e.tot}</span></Ring></div>
-{open&&<div style={{marginTop:12,borderTop:"1px solid rgba(255,255,255,0.06)",paddingTop:12}} onClick={function(ev){ev.stopPropagation()}}>{Array.from({length:e.tot}).map(function(_,s){var dn=s<e.done;return <div key={s} style={{display:"flex",gap:6,marginBottom:7,alignItems:"center",opacity:dn?0.5:1}}><span style={{fontSize:11,color:C.s,width:22}}>S{s+1}</span><button style={{flex:1,padding:9,borderRadius:10,background:dn?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.06)",border:dn?"1px solid rgba(0,255,136,0.2)":"1px solid rgba(255,255,255,0.08)",color:"#fff",fontSize:13,fontWeight:600,textAlign:"center"}}>{dn?e.w+" ✓":e.w}</button><button style={{flex:1,padding:9,borderRadius:10,background:dn?"rgba(0,255,136,0.1)":"rgba(255,255,255,0.06)",border:dn?"1px solid rgba(0,255,136,0.2)":"1px solid rgba(255,255,255,0.08)",color:"#fff",fontSize:13,fontWeight:600,textAlign:"center"}}>{dn?"10 reps ✓":"10 reps"}</button>{!dn&&<button style={{width:36,height:36,borderRadius:10,background:"linear-gradient(135deg,#00d4ff,#0088cc)",border:"none",color:"#fff",fontSize:15,display:"flex",alignItems:"center",justifyContent:"center"}}>✓</button>}</div>})}<div style={{marginTop:6,padding:"9px 12px",borderRadius:12,background:"rgba(0,212,255,0.06)",border:"1px solid rgba(0,212,255,0.15)",display:"flex",justifyContent:"space-between"}}><span style={{fontSize:11,color:C.m}}>⏱ Vila</span><span style={{fontSize:17,fontWeight:800,color:C.cy}}>1:30</span></div></div>}</GC>})}</>}
-function StatsTab(){var vols=[65,72,58,80,75,68,82],mx=Math.max.apply(null,vols),lbl=["M","Ti","O","To","F","L","S"];return <>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:20}}>📊 Progression</h1>
-<GC><p style={{fontSize:12,fontWeight:600,color:C.m,marginBottom:12}}>VOLYM 7 PASS (ton)</p><div style={{display:"flex",alignItems:"flex-end",gap:6,height:100}}>{vols.map(function(v,i){return <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}><span style={{fontSize:8,color:"rgba(255,255,255,0.4)"}}>{v}</span><div style={{width:"100%",height:(v/mx)*80+"px",borderRadius:6,background:i===vols.length-1?"linear-gradient(180deg,#00d4ff,#0066aa)":"linear-gradient(180deg,rgba(0,212,255,0.3),rgba(0,212,255,0.08))"}}></div><span style={{fontSize:8,color:C.s}}>{lbl[i]}</span></div>})}</div></GC>
-<p style={{fontSize:12,fontWeight:600,color:C.s,letterSpacing:1,margin:"16px 0 8px"}}>FREKVENS / VECKA</p>
-<GC>{[{m:"Sido-delts",f:6,t:6},{m:"Biceps",f:4,t:6},{m:"Triceps",f:4,t:6},{m:"Bröst",f:2,t:6},{m:"Rygg",f:2,t:6},{m:"Ben",f:2,t:6}].map(function(x,i){return <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:i<5?8:0}}><span style={{fontSize:11,width:72,color:"rgba(255,255,255,0.6)"}}>{x.m}</span><div style={{flex:1,height:7,borderRadius:4,background:"rgba(255,255,255,0.06)"}}><div style={{width:(x.f/x.t)*100+"%",height:"100%",borderRadius:4,background:"linear-gradient(90deg,#00ff88,#00cc66)"}}></div></div><span style={{fontSize:10,fontWeight:700,color:C.gr,width:26,textAlign:"right"}}>{x.f}x</span></div>})}</GC></>}
-function BodyTab(){return <>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:20}}>💪 Kropp</h1>
-<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:16}}>{[{l:"Vikt",v:"72.3",u:"kg",t:"+0.4"},{l:"Armar",v:"38.5",u:"cm",t:"+0.3"},{l:"Midja",v:"78",u:"cm",t:"-1.2"},{l:"Bröst",v:"102",u:"cm",t:"+0.8"}].map(function(s,i){return <GC key={i} sx={{textAlign:"center",padding:"16px 12px"}}><p style={{fontSize:10,color:C.s}}>{s.l}</p><p style={{fontSize:26,fontWeight:800,marginTop:4}}>{s.v} <span style={{fontSize:13,color:C.s}}>{s.u}</span></p><span style={{fontSize:11,fontWeight:600,color:C.gr}}>{s.t} {s.u}</span></GC>})}</div>
-<GC sx={{textAlign:"center",padding:"28px 16px"}}><div style={{fontSize:36,marginBottom:8}}>📷</div><p style={{fontSize:13,color:C.m}}>Lägg till progress-bild</p><button style={{marginTop:12,padding:"9px 22px",borderRadius:12,background:"rgba(0,212,255,0.15)",border:"1px solid rgba(0,212,255,0.3)",color:C.cy,fontSize:12,fontWeight:600}}>+ Ta foto</button></GC></>}
-function ProgramTab(){return <>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:20}}>📋 Program</h1>
-<p style={{fontSize:12,fontWeight:600,color:C.s,letterSpacing:1,marginBottom:8}}>4-VECKORS CYKEL</p>
-<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:20}}>{["+","++","+++","D"].map(function(p,i){var ph=PH[p],cur=p==="++";return <GC key={i} gl={cur?ph.c:null} bc={cur?ph.c+"44":C.b} sx={{position:"relative"}}>{cur&&<span style={{position:"absolute",top:7,right:7,fontSize:8,fontWeight:700,background:ph.c+"33",color:ph.c,padding:"2px 6px",borderRadius:6}}>NU</span>}<span style={{fontSize:20,fontWeight:800,color:ph.c}}>{p}</span><p style={{fontSize:12,fontWeight:600,marginTop:3}}>{ph.l}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>{ph.d}</p></GC>})}</div>
-<p style={{fontSize:12,fontWeight:600,color:C.s,letterSpacing:1,marginBottom:8}}>VECKOSCHEMA</p>
-{DAYS.map(function(d,i){return <GC key={i} bc={d.a?"rgba(0,212,255,0.2)":C.b} sx={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px"}}><div style={{width:40,height:40,borderRadius:10,background:d.a?"rgba(0,212,255,0.15)":"rgba(255,255,255,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>{d.i}</div><div style={{flex:1}}><p style={{fontSize:13,fontWeight:600}}>{d.d} — {d.l}</p><p style={{fontSize:10,color:C.s,marginTop:1}}>{d.t}</p></div>{d.a&&<span style={{fontSize:8,color:C.cy,fontWeight:700,letterSpacing:1}}>IDAG</span>}</GC>})}</>}
-function App(){var s=h("home"),tab=s[0],setTab=s[1];var tabs=[{id:"home",i:"🏠",l:"Idag"},{id:"workout",i:"🏋️",l:"Pass"},{id:"stats",i:"📊",l:"Grafer"},{id:"body",i:"💪",l:"Kropp"},{id:"program",i:"📋",l:"Program"}];return <div style={{maxWidth:430,margin:"0 auto",minHeight:"100vh",background:"linear-gradient(165deg,#060a1f 0%,#0a1029 30%,#0d1535 60%,#091228 100%)"}}><div style={{padding:"20px 16px 100px"}}>{tab==="home"&&<HomeTab/>}{tab==="workout"&&<WorkoutTab/>}{tab==="stats"&&<StatsTab/>}{tab==="body"&&<BodyTab/>}{tab==="program"&&<ProgramTab/>}</div><div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(6,10,31,0.95)",backdropFilter:"blur(30px)",WebkitBackdropFilter:"blur(30px)",borderTop:"1px solid rgba(255,255,255,0.06)",display:"flex",justifyContent:"space-around",padding:"8px 0 28px",zIndex:10}}>{tabs.map(function(t){return <button key={t.id} onClick={function(){setTab(t.id);window.scrollTo(0,0)}} style={{background:"none",border:"none",color:tab===t.id?C.cy:C.s,display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:9,fontWeight:500,padding:"4px 10px"}}><span style={{fontSize:20}}>{t.i}</span>{t.l}</button>})}</div></div>}
+var h=React.useState,ue=React.useEffect,ur=React.useRef;
+var C={cy:"#00d4ff",gr:"#00ff88",or:"#ff6b00",pu:"#8b5cf6",rd:"#ff6b6b",m:"rgba(255,255,255,0.5)",s:"rgba(255,255,255,0.35)",b:"rgba(255,255,255,0.08)"};
+var PHASE_MAP={1:"+",2:"++",3:"+++",4:"D"};
+var PH={"+":{l:"STYRKA",d:"5-8 reps • 2-3 min vila",c:C.cy,rest:150},"++":{l:"HYPERTROFI",d:"8-12 reps • 60-90s vila",c:C.gr,rest:90},"+++":{l:"PUMP & VOLYM",d:"12-20+ reps • 30-45s",c:C.or,rest:45},"D":{l:"DELOAD",d:"50% vikt • teknik",c:C.pu,rest:60}};
+var DN=["Söndag","Måndag","Tisdag","Onsdag","Torsdag","Fredag","Lördag"];
+var DS=["Sön","Mån","Tis","Ons","Tor","Fre","Lör"];
+var DAYS=[
+{d:"Sön",l:"Bröst + Sido-delts",t:"60 min",i:"🏋️",pre:"20 min trappa nivå 10-11",cardio:"20 min trappa nivå 10-11",lunch:"Wrist curls 3×20 + Hammer curls 3×15 + Band pull-aparts 2×20 + Tricep kickbacks 2×15 + Lateral raises 2×15"},
+{d:"Mån",l:"Rygg + Biceps",t:"30 min",i:"💪",pre:"MMA 17:30 (1h)",cardio:"15 min trappa lunch",lunch:"Wrist curls 3×20 + Push-ups 3×20 + Lateral raises 3×15 + Tricep kickbacks 2×15"},
+{d:"Tis",l:"Ben + Axlar",t:"60 min",i:"🦵",pre:"MMA 19-20:30",cardio:"15 min trappa lunch + 10 min efter MMA",lunch:"Wrist curls 3×20 + Push-ups 3×20 + Bicep curls 3×15 + Band pull-aparts 2×20 + Hammer curls 2×15"},
+{d:"Ons",l:"Armar + MMA-Core",t:"30 min",i:"🥊",pre:"MMA 17:30 (1h)",cardio:"15 min trappa lunch",lunch:"Wrist curls 3×20 + Push-ups 3×20 + Lateral raises 3×15 + Band pull-aparts 2×20 + Face pulls 2×15"},
+{d:"Tor",l:"Rygg + Biceps Tungt",t:"60 min",i:"🔥",pre:"MMA 19-20:30",cardio:"15 min trappa lunch + 10 min efter MMA",lunch:"Wrist curls 3×20 + Diamond push-ups 2×15 + Lateral raises 3×15 + Tricep kickbacks 2×15 + Hammer curls 2×15"},
+{d:"Fre",l:"Axlar + Triceps",t:"30 min",i:"⚡",pre:"MMA 17:30 sparring",cardio:"15 min trappa lunch",lunch:"Wrist curls 3×20 + Push-ups 3×20 + Bicep curls 3×15 + Band pull-aparts 2×20 + Hammer curls 2×15"},
+{d:"Lör",l:"BB Svaga Punkter",t:"60 min",i:"🎯",pre:"MMA 12-13",cardio:"0-10 min",lunch:"Wrist curls 3×20 + Push-ups 2×20 + Bicep curls 2×15 + Lateral raises 2×15 + Band pull-aparts 2×15"}];
+var WARMUP=[
+{id:"ua",t:"Underarmar 8×26 reps @ 8kg"},
+{id:"dh",t:"Dead hangs 2×30 sek"},
+{id:"te",t:"Thoracic extension foam roller 10 reps"},
+{id:"cs",t:"Couch stretch 45 sek/sida"},
+{id:"cc",t:"Cat-cow 10 reps"},
+{id:"bp",t:"Band pull-aparts 15 reps"}];
+var PRG={
+0:{"+":["Incline bänkpress|4|6","Flat hantelpress|4|6","Dips med vikt|3|8","Cable flyes high-to-low|3|10","Lateral raises|4|12","Cable lateral raises|3|12"],
+"++":["Incline hantelpress|4|10","Flat bänkpress|3|10","Cable flyes alla vinklar|3|12","Dips|3|12","Pec deck|3|12","Lateral raises|5|12","Face pulls|3|15"],
+"+++":["Incline hantelpress|3|15","Cable flyes DROPSET|3|15","Dips|3|20","Pec deck 21s|2|21","Lateral raises DROPSET|3|20","Cable lateral raises|3|20"],
+"D":["Incline hantelpress|3|10","Flyes|2|12","Lateral raises|3|15"]},
+1:{"+":["Chins med vikt|4|6","Enarms hantelrodd|3|6","Barbell curl|3|6","Incline dumbbell curl|3|8"],
+"++":["Latsdrag brett|3|10","Cable row|3|12","EZ-bar curl|3|10","Hammer curls|3|10","Face pulls|2|15"],
+"+++":["Latsdrag|3|15","Cable row|3|15","Bicep curl 21s|3|21","Spider curls|2|20"],
+"D":["Latsdrag|2|12","Curls|2|12"]},
+2:{"+":["Knäböj|4|6","Rumänsk marklyft|4|6","Benpress|3|8","Bencurl|3|8","Seated DB press|4|6","Lateral raises|4|10"],
+"++":["Knäböj|4|10","Rumänsk marklyft|3|10","Walking lunges|3|12","Leg extension|3|12","Arnold press|3|10","Lateral raises|5|12","Rear delt flyes|3|15"],
+"+++":["Knäböj|3|15","Benpress PYRAMID|5|12","Walking lunges|3|20","Lateral raises DROPSET|4|20","DB press|3|15"],
+"D":["Knäböj|3|10","Lateral raises|3|12"]},
+3:{"+":["Close-grip bänkpress|3|6","Barbell curl|3|6","Skullcrushers|3|8","Hammer curls|3|8","Landmine rotations|3|6"],
+"++":["Tricep pushdowns|3|10","EZ-bar curl|3|10","Overhead tricep ext|3|10","Incline curl|3|10","Landmine rotations|3|10","Farmers walks|3|1"],
+"+++":["Pushdowns+curls SUPERSATS|4|15","Overhead+hammer SUPERSATS|3|15","Landmine rotations|3|15","Med ball slams|3|15"],
+"D":["Pushdowns|2|12","Curls|2|12","Farmers walks|2|1"]},
+4:{"+":["Marklyft|4|5","Barbell row|4|6","Weighted pull-ups|3|6","Barbell curl|4|6","Preacher curl|3|8"],
+"++":["Marklyft|4|8","T-bar row|4|10","Latsdrag brett|3|12","Cable row close grip|3|12","EZ curl|3|10","Concentration curl|3|10","Wrist curls|3|15"],
+"+++":["Marklyft PYRAMID|5|10","Cable row|3|20","Latsdrag DROPSET|3|20","Bicep curl 21s|3|21","Spider curls|2|20"],
+"D":["Marklyft|3|8","Rows|2|10","Curls|2|12"]},
+5:{"+":["Standing OHP|4|6","Lateral raises|4|10","Skullcrushers|3|8","Rope pushdowns|3|8"],
+"++":["Arnold press|3|10","Lateral raises|5|12","Rear delt flyes|3|15","Overhead tricep ext|3|12","Tricep kickbacks|3|12"],
+"+++":["DB press|3|15","Lateral raises DROPSET|3|20","Pushdowns+lateral SUPERSATS|3|15","Band pull-aparts|2|25"],
+"D":["DB press|2|10","Lateral raises|2|12","Pushdowns|2|12"]},
+6:{"+":["Incline hantelpress|4|6","Seated DB press|4|6","Barbell row|4|6","Barbell curl|4|6","Close-grip bänk|3|8","Knäböj|3|8"],
+"++":["Cable flyes|4|12","Lateral raises|5|12","T-bar row|4|10","EZ curl+pushdowns SUPERSATS|4|10","Leg extension|3|12","Vadpress|4|15"],
+"+++":["GIANT bröst: press-flyes-dips|3|12","GIANT axlar: press-lateral-rear|3|12","GIANT armar: curls-pushdowns-hammer-overhead|3|12"],
+"D":["Valfria isolationsövningar|2|12","Stretching+foam rolling|1|1"]}
+};
+function parseEx(str){var p=str.split("|");var nm=p[0],sets=parseInt(p[1]),reps=parseInt(p[2]),type="normal",subs=null;
+if(/DROPSET/i.test(nm)){type="dropset";nm=nm.replace(/ ?DROPSET/i,"").trim()}
+else if(/SUPERSATS/i.test(nm)){type="superset";var pts=nm.replace(/ ?SUPERSATS/i,"").split("+");subs=pts.map(function(s){return s.trim()});nm=subs.join(" + ")}
+else if(/PYRAMID/i.test(nm)){type="pyramid";nm=nm.replace(/ ?PYRAMID/i,"").trim()}
+else if(/^GIANT/i.test(nm)){type="giant";var gm=nm.match(/GIANT.*?:\s*(.+)/i);subs=gm?gm[1].split("-").map(function(s){return s.trim()}):[];nm=nm.replace(/GIANT\s*/i,"").trim()}
+else if(/21s/i.test(nm)){type="21s";nm=nm.replace(/ ?21s/i,"").trim()}
+return{name:nm,sets:sets,reps:reps,type:type,subs:subs}}
+var EX_CATS={
+bench:{m:"Bröst, triceps, främre delts",t:"Skuldror bakåt-ner. Kontrollerad ned, explosiv upp. Armbågar ~45°."},
+ohp:{m:"Axlar, triceps, övre bröst",t:"Core tight. Pressa rakt upp ovanför huvudet. Undvik att luta baken."},
+dip:{m:"Bröst, triceps, delts",t:"Luta framåt = mer bröst. Rakt = mer triceps. Kontrollera ned."},
+flye:{m:"Bröst (stretch + kontraktion)",t:"Lätt böj i armbågen. Känn stretchen i botten. Kläm ihop i toppen."},
+lateral:{m:"Sido-delts",t:"Lilla fingret högst (häll vatten ur glas). Lyft till axelhöjd, inte högre."},
+pullup:{m:"Latissimus, biceps, core",t:"Dra armbågarna ner, inte händerna upp. Full extension i botten."},
+pulldown:{m:"Latissimus, biceps, rear delts",t:"Luta 10-15° bakåt. Dra till övre bröst. Kläm skulderbladen."},
+row:{m:"Övre rygg, lats, biceps, rear delts",t:"Dra armbågen bakåt. Kläm skulderbladen. Kontrollerad excentrisk."},
+curl:{m:"Biceps, brachialis, underarmar",t:"Armbågar stilla vid sidan. Kontrollera ner långsamt. Ingen swing."},
+tricep:{m:"Triceps (alla tre huvuden)",t:"Armbågar stilla. Fullt lockout. Kontrollerad excentrisk."},
+skull:{m:"Triceps (långhuvudet)",t:"Armbågar pekar upp. Sänk till pannan. Håll överarmarna vertikala."},
+squat:{m:"Quads, glutes, hamstrings, core",t:"Knän i tåriktning. Bryt i höften först. Bröst upp, rygg rak."},
+deadlift:{m:"Bakkedja, rygg, glutes, core",t:"Bar nära kroppen. Dra med benen först. Lås ut med höften, inte ryggen."},
+lunge:{m:"Quads, glutes, hamstrings",t:"Långt steg. Bakre knä mot golv. Framknä bakom tårna."},
+legiso:{m:"Quads / hamstrings / vader",t:"Kontrollerad rörelse. Full range of motion. Kläm i toppen."},
+facepull:{m:"Rear delts, rotator cuff, övre rygg",t:"Dra till ansiktet. Rotera ut vid slutposition. Lätt vikt, hög volym."},
+core:{m:"Core, obliques, stabiliserare",t:"Kontrollerad rotation. Anti-rotation = spänning utan rörelse."},
+carry:{m:"Grip, core, traps, stabiliserare",t:"Axlar bakåt-ner. Raka armar. Kort steg, tight core."},
+super:{m:"Flera muskelgrupper",t:"Ingen vila mellan övningar i supersetet. Vila efter sista."},
+other:{m:"Varierat",t:"Fokus på mind-muscle connection. Kontroll framför vikt."}};
+function getExCat(name){var n=name.toLowerCase();
+if(/bänk|bench|flat.*(press|hantel)|incline.*(press|hantel|bänk)/i.test(n)&&!/close/i.test(n))return"bench";
+if(/ohp|overhead|arnold|seated.*db.*press|standing.*press|db press/i.test(n)&&!/leg/i.test(n))return"ohp";
+if(/dip/i.test(n))return"dip";
+if(/fl[yö]e|pec.*deck/i.test(n))return"flye";
+if(/lateral|sido/i.test(n))return"lateral";
+if(/chin|pull.?up/i.test(n))return"pullup";
+if(/latsdrag|pulldown/i.test(n))return"pulldown";
+if(/row|rodd|t.?bar/i.test(n))return"row";
+if(/curl|bicep|spider|preacher|hammer|wrist/i.test(n)&&!/leg/i.test(n))return"curl";
+if(/skull/i.test(n))return"skull";
+if(/push.?down|kickback|overhead.*tricep|rope|close.?grip/i.test(n))return"tricep";
+if(/knä|squat|benpress|leg press/i.test(n))return"squat";
+if(/mark|dead/i.test(n))return"deadlift";
+if(/lunge|walking/i.test(n))return"lunge";
+if(/bencurl|leg.*ext|vad/i.test(n))return"legiso";
+if(/face.*pull|rear.*delt|band.*pull/i.test(n))return"facepull";
+if(/landmine|med.*ball|pallof|slam/i.test(n))return"core";
+if(/farmer|carry|walk/i.test(n)&&!/walking/i.test(n))return"carry";
+if(/super|giant/i.test(n))return"super";
+return"other"}
+function ExSvg(p){var s=p.size||56,c=p.color||C.cy,cat=p.cat;
+var vb="0 0 64 64",sw="1.8",lc="round";
+function L(x1,y1,x2,y2,co){return <line x1={x1} y1={y1} x2={x2} y2={y2} stroke={co||c} strokeWidth={sw} strokeLinecap={lc}/>}
+function Ci(cx,cy,r){return <circle cx={cx} cy={cy} r={r} fill="none" stroke={c} strokeWidth={sw}/>}
+function R(x,y,w,h,co,op){return <rect x={x} y={y} width={w} height={h} rx="2" fill={co||c} opacity={op||0.5}/>}
+function Bar(x1,y1,x2,y2){return <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap={lc}/>}
+var els=[];
+if(cat==="bench"){els=[
+Bar(14,20,50,20),R(10,16,6,8),R(48,16,6,8),
+Ci(18,30,5),L(23,30,48,30),L(48,30,55,40),L(55,40,56,50),
+L(30,30,30,20),L(40,30,40,20),
+<rect x="20" y="36" width="28" height="4" rx="2" fill="rgba(255,255,255,0.1)"/>]}
+else if(cat==="ohp"){els=[
+Ci(32,12,5),L(32,17,32,38),L(32,38,22,56),L(32,38,42,56),
+L(32,22,20,14),L(32,22,44,14),
+Bar(14,12,50,12),R(10,8,6,8),R(48,8,6,8)]}
+else if(cat==="dip"){els=[
+<rect x="12" y="10" width="4" height="44" rx="2" fill="rgba(255,255,255,0.15)"/>,
+<rect x="48" y="10" width="4" height="44" rx="2" fill="rgba(255,255,255,0.15)"/>,
+Ci(32,16,5),L(32,21,32,40),L(32,40,26,54),L(32,40,38,54),
+L(32,24,16,30),L(32,24,48,30)]}
+else if(cat==="flye"){els=[
+Ci(18,30,5),L(23,30,48,30),L(48,30,55,42),L(55,42,56,52),
+L(30,30,18,16),L(40,30,50,16),
+R(14,14,8,4),R(48,14,8,4),
+<rect x="20" y="34" width="28" height="4" rx="2" fill="rgba(255,255,255,0.1)"/>]}
+else if(cat==="lateral"){els=[
+Ci(32,12,5),L(32,17,32,38),L(32,38,24,56),L(32,38,40,56),
+L(32,22,10,26),L(32,22,54,26),
+R(5,23,8,4),R(51,23,8,4)]}
+else if(cat==="pullup"){els=[
+Bar(10,8,54,8),
+Ci(32,20,5),L(32,25,32,44),L(32,44,26,56),L(32,44,38,56),
+L(32,22,22,12),L(22,12,20,8),L(32,22,42,12),L(42,12,44,8)]}
+else if(cat==="pulldown"){els=[
+Bar(20,6,44,6),L(32,6,32,12),
+Ci(32,18,5),L(32,23,32,42),L(32,42,24,56),L(32,42,40,56),
+L(32,24,22,14),L(22,14,24,8),L(32,24,42,14),L(42,14,40,8)]}
+else if(cat==="row"){els=[
+Ci(20,18,5),L(22,23,40,36),L(40,36,30,54),L(40,36,50,54),
+L(30,28,26,38),L(26,38,28,30),L(36,32,40,42),L(40,42,36,34),
+Bar(16,30,16,44)]}
+else if(cat==="curl"){els=[
+Ci(32,12,5),L(32,17,32,38),L(32,38,24,56),L(32,38,40,56),
+L(32,22,20,36),L(20,36,18,48),R(14,46,8,4),
+L(32,22,44,36),L(44,36,40,24),R(37,20,8,4)]}
+else if(cat==="tricep"){els=[
+Ci(32,12,5),L(32,17,32,38),L(32,38,24,56),L(32,38,40,56),
+L(32,22,24,32),L(24,32,24,46),
+L(32,22,40,32),L(40,32,40,46),
+<line x1="24" y1="46" x2="40" y2="46" stroke={c} strokeWidth="2" strokeLinecap="round"/>]}
+else if(cat==="skull"){els=[
+Ci(16,30,5),L(21,30,50,30),L(50,30,56,42),L(56,42,56,52),
+L(34,30,28,14),L(38,30,32,14),
+Bar(22,12,38,12),
+<rect x="20" y="34" width="30" height="4" rx="2" fill="rgba(255,255,255,0.1)"/>]}
+else if(cat==="squat"){els=[
+Ci(32,10,5),Bar(16,18,48,18),R(12,14,6,8),R(46,14,6,8),
+L(32,18,30,34),L(30,34,20,46),L(20,46,16,58),
+L(30,34,42,46),L(42,46,46,58),
+L(32,22,24,18),L(32,22,40,18)]}
+else if(cat==="deadlift"){els=[
+Ci(24,14,5),L(26,19,38,34),L(38,34,28,50),L(28,50,24,58),
+L(38,34,48,50),L(48,50,52,58),
+L(30,24,30,40),L(34,28,36,40),
+Bar(18,42,48,42),<circle cx="16" cy="42" r="6" fill="none" stroke={c} strokeWidth="1.5" opacity="0.5"/>,<circle cx="50" cy="42" r="6" fill="none" stroke={c} strokeWidth="1.5" opacity="0.5"/>]}
+else if(cat==="lunge"){els=[
+Ci(28,10,5),L(28,15,30,34),
+L(30,34,18,50),L(18,50,14,58),
+L(30,34,46,50),L(46,50,48,58),
+L(28,20,20,30),L(28,20,36,30)]}
+else if(cat==="legiso"){els=[
+<rect x="14" y="22" width="20" height="30" rx="4" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>,
+Ci(24,18,5),L(24,23,24,36),L(24,28,16,34),L(24,28,32,34),
+L(24,36,34,36),L(34,36,48,28),L(48,28,56,26)]}
+else if(cat==="facepull"){els=[
+Ci(32,16,5),L(32,21,32,42),L(32,42,24,58),L(32,42,40,58),
+L(32,24,22,16),L(22,16,14,12),L(32,24,42,16),L(42,16,50,12),
+L(14,12,14,6,"rgba(255,255,255,0.3)"),L(50,12,50,6,"rgba(255,255,255,0.3)"),
+Bar(14,6,50,6)]}
+else if(cat==="core"){els=[
+Ci(28,12,5),L(28,17,32,36),L(32,36,24,56),L(32,36,40,56),
+L(28,24,18,32),L(18,32,14,24),L(28,24,42,28),L(42,28,50,22),
+R(10,20,8,6),R(48,18,8,6)]}
+else if(cat==="carry"){els=[
+Ci(32,10,5),L(32,15,32,38),L(32,38,24,56),L(32,38,40,56),
+L(32,20,20,20),L(20,20,20,46),L(32,20,44,20),L(44,20,44,46),
+R(16,44,8,6),R(40,44,8,6)]}
+else if(cat==="super"){els=[
+Ci(20,16,4),L(20,20,20,34),L(20,34,14,46),L(20,34,26,46),L(20,24,12,30),L(20,24,28,30),
+Ci(44,16,4),L(44,20,44,34),L(44,34,38,46),L(44,34,50,46),L(44,24,36,30),L(44,24,52,30),
+<text x="32" y="56" textAnchor="middle" fontSize="10" fill={c} fontWeight="700">+</text>]}
+else if(cat==="hang"){els=[
+Bar(14,8,50,8),
+Ci(32,22,5),L(32,27,32,46),L(32,46,26,58),L(32,46,38,58),
+L(32,20,24,10),L(24,10,22,8),L(32,20,40,10),L(40,10,42,8)]}
+else if(cat==="foam"){els=[
+R(16,36,32,6,"rgba(255,255,255,0.15)",1),
+Ci(22,28,5),L(24,33,40,30),L(40,30,32,42),L(32,42,28,54),
+L(40,30,52,42),L(52,42,56,52),
+L(28,32,20,40),L(36,30,42,22)]}
+else if(cat==="catcow"){els=[
+Ci(16,24,5),L(21,26,28,32),L(28,32,42,28),L(42,28,50,32),
+L(28,32,28,48),L(42,28,42,48),
+L(28,48,24,54),L(42,48,46,54)]}
+else{els=[Ci(32,16,5),L(32,21,32,42),L(32,42,24,56),L(32,42,40,56),L(32,26,20,34),L(32,26,44,34)]}
+return <svg width={s} height={s} viewBox={vb} style={{flexShrink:0}}>{els}</svg>}
+
+function ExInfoPanel(p){var cat=getExCat(p.name);var info=EX_CATS[cat]||EX_CATS.other;
+return <div style={{background:"rgba(0,212,255,0.04)",border:"1px solid rgba(0,212,255,0.12)",borderRadius:12,padding:"12px",marginTop:8}}>
+<div style={{display:"flex",gap:12,alignItems:"center",marginBottom:8}}>
+<div style={{background:"rgba(0,0,0,0.3)",borderRadius:10,padding:6}}><ExSvg cat={cat} size={56} color={p.phaseColor||C.cy}/></div>
+<div><p style={{fontSize:13,fontWeight:700}}>{p.name}</p><p style={{fontSize:10,color:C.gr,marginTop:2}}>{info.m}</p></div></div>
+<p style={{fontSize:11,color:C.m,lineHeight:"1.5"}}>{info.t}</p>
+<button onClick={function(){window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(p.name+" exercise form"),"_blank")}} style={{marginTop:8,padding:"6px 12px",borderRadius:8,background:"rgba(255,0,0,0.1)",border:"1px solid rgba(255,0,0,0.2)",color:"#ff4444",fontSize:11,fontWeight:600}}>📹 YouTube</button>
+</div>}
+var WARMUP_INFO={
+ua:{m:"Underarmar, gripstyrka",t:"Håll stången med rak handled. Kontrollera både upp och ner.",cat:"curl",yt:"wrist roller forearm exercise"},
+dh:{m:"Axlar, rygg, dekompression",t:"Slappna av helt. Låt tyngden dra isär ryggen. Andas djupt.",cat:"hang",yt:"dead hang decompression"},
+te:{m:"Thoracic spine, bröstöppning",t:"Rullan vid övre rygg. Armar i kors eller bakom huvudet. Rulla långsamt.",cat:"foam",yt:"thoracic extension foam roller"},
+cs:{m:"Höftflexorer, quads",t:"Bakre knä nära vägg. Pressa höften framåt. Håll överkroppen rak.",cat:"lunge",yt:"couch stretch hip flexor"},
+cc:{m:"Rygg, core, rörlighet",t:"Böj och sträck ryggen långsamt. Andas in vid extension, ut vid flexion.",cat:"catcow",yt:"cat cow stretch"},
+bp:{m:"Rear delts, övre rygg, rotator cuff",t:"Dra isär bandet i brösthöjd. Kläm skulderbladen. Kontrollerad tillbaka.",cat:"facepull",yt:"band pull apart"}};
+function LS(k,d){try{var v=localStorage.getItem("gymish_"+k);return v?JSON.parse(v):d}catch(e){return d}}
+function SS(k,v){try{localStorage.setItem("gymish_"+k,JSON.stringify(v))}catch(e){}}
+function dk(){return new Date().toISOString().slice(0,10)}
+function GC(p){return <div onClick={p.onClick} style={{background:"rgba(255,255,255,0.04)",borderRadius:18,border:"1px solid "+(p.bc||C.b),padding:"14px 16px",marginBottom:10,boxShadow:p.gl?"0 0 25px "+p.gl+"22":"none",transition:"border-color .2s,background .2s,box-shadow .2s",animation:"fadeIn .25s ease-out",...(p.sx||{})}}>{p.children}</div>}
+function Ring(p){var r=(p.sz-5)/2,ci=2*Math.PI*r,o=ci-(p.pr/100)*ci;return <div style={{position:"relative",width:p.sz,height:p.sz}}><svg width={p.sz} height={p.sz} style={{transform:"rotate(-90deg)"}}><circle cx={p.sz/2} cy={p.sz/2} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={5}/><circle cx={p.sz/2} cy={p.sz/2} r={r} fill="none" stroke={p.co} strokeWidth={5} strokeDasharray={ci} strokeDashoffset={o} strokeLinecap="round" style={{transition:"stroke-dashoffset .5s ease-out"}}/></svg><div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column"}}>{p.children}</div></div>}
+function fmtT(s){var m=Math.floor(s/60),sec=s%60;return String(m).padStart(2,"0")+":"+String(sec).padStart(2,"0")}
+function SectionBox(p){var done=p.done,active=p.active,title=p.title,sub=p.sub,icon=p.icon,color=p.color||C.cy;
+return <GC onClick={p.onClick} bc={done?"rgba(0,255,136,0.2)":active?color+"44":C.b} gl={active?color:null} sx={{cursor:"pointer",minHeight:70}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+<div style={{display:"flex",alignItems:"center",gap:14}}>
+<div style={{width:48,height:48,borderRadius:14,background:done?"rgba(0,255,136,0.15)":active?color+"20":"rgba(255,255,255,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,transition:"background .2s"}}>{done?"✅":icon}</div>
+<div><p style={{fontSize:15,fontWeight:700,color:done?C.gr:"#fff"}}>{title}</p><p style={{fontSize:11,color:C.m,marginTop:2}}>{sub}</p></div>
+</div>
+{!done&&!active&&<span style={{fontSize:22,color:C.s}}>›</span>}
+{active&&<div style={{animation:"pulse 1.5s infinite"}}><div style={{width:10,height:10,borderRadius:5,background:color}}/></div>}
+</div></GC>}
+function TimerWidget(p){
+var ts=h(0),t=ts[0],setT=ts[1];var rs=h(false),run=rs[0],setRun=rs[1];var ref=ur(null);
+ue(function(){if(run){ref.current=setInterval(function(){setT(function(v){return v+1})},1000)}else if(ref.current)clearInterval(ref.current);return function(){if(ref.current)clearInterval(ref.current)}},[run]);
+var tgt=p.target||0;var pct=tgt>0?Math.min(100,Math.round(t/tgt*100)):0;var hit=tgt>0&&t>=tgt;
+return <div style={{textAlign:"center",padding:"12px 0"}}>
+<p style={{fontSize:36,fontWeight:800,color:hit?C.gr:p.color||C.cy,fontVariantNumeric:"tabular-nums"}}>{fmtT(t)}</p>
+{tgt>0&&<div style={{marginTop:6}}>
+<div style={{height:6,borderRadius:3,background:"rgba(255,255,255,0.06)",overflow:"hidden"}}><div style={{height:"100%",width:pct+"%",background:hit?C.gr:p.color||C.cy,borderRadius:3,transition:"width 1s linear"}}/></div>
+<p style={{fontSize:10,color:hit?C.gr:C.s,marginTop:4}}>{hit?"✅ Mål nått!":pct+"% av "+Math.round(tgt/60)+" min"}</p>
+</div>}
+<div style={{display:"flex",gap:8,justifyContent:"center",marginTop:10}}>
+{!run?<button onClick={function(){setRun(true)}} style={{padding:"10px 28px",borderRadius:12,background:"linear-gradient(135deg,"+(p.color||C.cy)+","+(p.color||C.cy)+"aa)",border:"none",color:"#fff",fontSize:14,fontWeight:700}}>▶ Starta</button>:
+<button onClick={function(){setRun(false)}} style={{padding:"10px 28px",borderRadius:12,background:"linear-gradient(135deg,#ff6b6b,#cc4444)",border:"none",color:"#fff",fontSize:14,fontWeight:700}}>⏸ Pausa</button>}
+{t>0&&<button onClick={function(){setRun(false);setT(0);if(p.onDone)p.onDone(t)}} style={{padding:"10px 28px",borderRadius:12,background:"rgba(0,255,136,0.15)",border:"1px solid rgba(0,255,136,0.3)",color:C.gr,fontSize:14,fontWeight:700}}>✓ Klar</button>}
+</div></div>}
+function RestTimer(p){var ts=h(p.seconds),t=ts[0],setT=ts[1];var rs=h(true),run=rs[0],setRun=rs[1];var ref=ur(null);
+ue(function(){if(run&&t>0){ref.current=setInterval(function(){setT(function(v){if(v<=1){clearInterval(ref.current);if(p.onDone)p.onDone();return 0}return v-1})},1000)}else if(ref.current)clearInterval(ref.current);return function(){if(ref.current)clearInterval(ref.current)}},[run,t]);
+var pct=p.seconds>0?Math.round(t/p.seconds*100):0;
+return <div style={{background:"rgba(0,212,255,0.08)",border:"1px solid rgba(0,212,255,0.2)",borderRadius:16,padding:"16px",textAlign:"center",marginTop:8,marginBottom:8}}>
+<p style={{fontSize:10,color:C.cy,fontWeight:700,letterSpacing:1,marginBottom:6}}>VILA</p>
+<p style={{fontSize:32,fontWeight:800,color:t===0?C.gr:C.cy,fontVariantNumeric:"tabular-nums"}}>{fmtT(t)}</p>
+<div style={{height:4,borderRadius:2,background:"rgba(255,255,255,0.06)",marginTop:10,overflow:"hidden"}}><div style={{height:"100%",background:t===0?C.gr:C.cy,borderRadius:2,width:pct+"%",transition:"width 1s linear"}}/></div>
+<div style={{display:"flex",gap:8,justifyContent:"center",marginTop:10}}>
+{t>0&&<button onClick={function(){setRun(!run)}} style={{padding:"8px 20px",borderRadius:10,background:"rgba(255,255,255,0.06)",border:"1px solid "+C.b,color:"#fff",fontSize:12,fontWeight:600}}>{run?"⏸ Pausa":"▶ Fortsätt"}</button>}
+<button onClick={function(){if(ref.current)clearInterval(ref.current);if(p.onDone)p.onDone()}} style={{padding:"8px 20px",borderRadius:10,background:t===0?"rgba(0,255,136,0.15)":"rgba(255,255,255,0.06)",border:"1px solid "+(t===0?"rgba(0,255,136,0.3)":C.b),color:t===0?C.gr:"#fff",fontSize:12,fontWeight:600}}>{t===0?"✓ Nästa set":"Skippa →"}</button>
+</div></div>}
+
+function SetInput(p){var ks=h(p.lastKg!==undefined?String(p.lastKg):""),kg=ks[0],setKg=ks[1];var rps=h(String(p.targetReps)),reps=rps[0],setReps=rps[1];
+var quickKg=[5,10,15,20,25,30,40,50,60,80];
+return <div style={{background:"rgba(0,212,255,0.06)",border:"1px solid rgba(0,212,255,0.2)",borderRadius:14,padding:"14px",marginTop:8}}>
+<p style={{fontSize:11,fontWeight:700,color:C.cy,marginBottom:10}}>Set {p.setNum} — Logga</p>
+<div style={{display:"flex",gap:8,marginBottom:10}}>
+<div style={{flex:1}}><label style={{fontSize:9,color:C.s,display:"block",marginBottom:4}}>KG</label>
+<input type="number" inputMode="decimal" value={kg} onChange={function(e){setKg(e.target.value)}} placeholder="0" style={{width:"100%",padding:"10px 12px",borderRadius:10,background:"rgba(255,255,255,0.06)",border:"1px solid "+C.b,color:"#fff",fontSize:18,fontWeight:700,textAlign:"center",outline:"none",fontVariantNumeric:"tabular-nums"}} autoFocus/></div>
+<div style={{flex:1}}><label style={{fontSize:9,color:C.s,display:"block",marginBottom:4}}>REPS</label>
+<input type="number" inputMode="numeric" value={reps} onChange={function(e){setReps(e.target.value)}} placeholder="0" style={{width:"100%",padding:"10px 12px",borderRadius:10,background:"rgba(255,255,255,0.06)",border:"1px solid "+C.b,color:"#fff",fontSize:18,fontWeight:700,textAlign:"center",outline:"none",fontVariantNumeric:"tabular-nums"}}/></div>
+</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:4,marginBottom:10}}>{quickKg.map(function(v){return <button key={v} onClick={function(){setKg(String(v))}} style={{padding:"6px 10px",borderRadius:8,background:kg===String(v)?"rgba(0,212,255,0.15)":"rgba(255,255,255,0.04)",border:"1px solid "+(kg===String(v)?"rgba(0,212,255,0.3)":C.b),color:kg===String(v)?C.cy:C.s,fontSize:11,fontWeight:600}}>{v}kg</button>})}</div>
+<div style={{display:"flex",gap:8}}>
+<button onClick={p.onCancel} style={{flex:1,padding:"10px",borderRadius:10,background:"rgba(255,255,255,0.04)",border:"1px solid "+C.b,color:C.s,fontSize:12,fontWeight:600}}>Avbryt</button>
+<button onClick={function(){var k=parseFloat(kg)||0;var r=parseInt(reps)||0;if(r>0)p.onSave(k,r)}} style={{flex:2,padding:"10px",borderRadius:10,background:"linear-gradient(135deg,"+C.cy+",#0088cc)",border:"none",color:"#fff",fontSize:13,fontWeight:700,opacity:(parseInt(reps)||0)>0?"1":"0.4"}}>✓ Logga set</button>
+</div></div>}
+
+function TodayTab(p){
+var dow=p.dow,phase=p.phase,ph=PH[phase],today=DAYS[dow];
+var rawExs=PRG[dow][phase]||[];var exs=rawExs.map(parseEx);
+var key="day_"+dk()+"_"+dow;
+var ds=h(LS(key,{section:"idle",cardio:null,warmup:{},gym:{},cooldown:{},lunchDone:false,phase:phase})),data=ds[0],setDataRaw=ds[1];
+ue(function(){if(!data.phase||data.phase!==phase){setData(function(d){return{...d,phase:phase}})}},[phase]);
+var es=h(null),editSet=es[0],setEditSet=es[1];
+var rts=h(null),restTimer=rts[0],setRestTimer=rts[1];
+var ies=h(null),infoEx=ies[0],setInfoEx=ies[1];
+var iws=h(null),infoWu=iws[0],setInfoWu=iws[1];
+function setData(fn){setDataRaw(function(prev){var next=typeof fn==="function"?fn(prev):{...prev,...fn};SS(key,next);return next})}
+var cardioDone=data.cardio!==null;
+var warmupDone=WARMUP.every(function(w){return data.warmup[w.id]});
+var totalSets=exs.reduce(function(a,e){return a+e.sets},0);
+var doneSets=0;exs.forEach(function(e,ei){for(var si=0;si<e.sets;si++){var d=data.gym[ei+"_"+si];
+if(e.type==="superset"?d&&d.a&&d.b:e.type==="giant"?d&&d.subs&&d.subs.length===(e.subs||[]).length:!!d)doneSets++}});
+var gymDone=doneSets===totalSets&&totalSets>0;
+var lunchDone=data.lunchDone;
+var allDone=cardioDone&&warmupDone&&gymDone;
+var now=new Date(),hrs=now.getHours();
+var greeting=hrs<5?"God natt":hrs<10?"God morgon":hrs<17?"God eftermiddag":"God kväll";
+var dateStr=DN[dow]+" "+now.getDate()+"/"+(now.getMonth()+1);
+var sec=data.section;
+return <div>
+<div style={{marginBottom:20}}><p style={{fontSize:13,color:C.s,letterSpacing:1}}>{dateStr.toUpperCase()}</p><h1 style={{fontSize:26,fontWeight:700,marginTop:4}}>{greeting} KM 👋</h1></div>
+<GC gl={ph.c} bc={ph.c+"33"} sx={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,padding:"12px 16px"}}>
+<div><div style={{display:"flex",gap:8,alignItems:"center"}}><span style={{fontSize:11,fontWeight:700,color:ph.c,letterSpacing:2}}>VECKA {p.wk} / 4</span><span style={{fontSize:10,background:ph.c+"22",color:ph.c,padding:"2px 8px",borderRadius:20}}>{phase}</span></div><p style={{fontSize:15,fontWeight:700,marginTop:2}}>{ph.l}</p></div>
+<Ring sz={48} pr={(p.wk/4)*100} co={ph.c}><span style={{fontSize:13,fontWeight:700}}>{p.wk}</span></Ring></GC>
+{(function(){var cs=LS("cycle_start",null);if(!cs)return null;var start=new Date(cs+"T12:00");var now=new Date();var diff=Math.floor((now-start)/86400000);
+if(diff<7)return null;var nextWk=p.wk>=4?1:p.wk+1;var nextPh=PHASE_MAP[nextWk];var nextPhInfo=PH[nextPh];
+return <div style={{background:"linear-gradient(135deg,rgba(255,107,0,0.12),rgba(255,107,0,0.04))",border:"1px solid rgba(255,107,0,0.25)",borderRadius:14,padding:"12px 14px",marginBottom:14,display:"flex",alignItems:"center",gap:12}}>
+<div style={{width:36,height:36,borderRadius:10,background:"rgba(255,107,0,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>🔄</div>
+<div style={{flex:1}}><p style={{fontSize:12,fontWeight:700,color:C.or}}>Dag {diff} på {phase} {ph.l}</p>
+<p style={{fontSize:10,color:C.s,marginTop:2}}>Dags att byta till {nextPh} {nextPhInfo.l}?</p></div>
+<button onClick={function(e){e.stopPropagation();p.setWk(nextWk)}} style={{padding:"8px 12px",borderRadius:10,background:nextPhInfo.c+"22",border:"1px solid "+nextPhInfo.c+"44",color:nextPhInfo.c,fontSize:11,fontWeight:700,flexShrink:0}}>Byt →</button>
+</div>})()}
+{sec==="idle"&&<div>
+<p style={{fontSize:12,fontWeight:600,color:C.s,letterSpacing:1,marginBottom:10}}>DAGENS SCHEMA</p>
+<SectionBox icon="🏃" title="Kardio" sub={today.cardio} done={cardioDone} onClick={function(){setData(function(d){return{...d,section:"cardio"}})}}/>
+<SectionBox icon="🔄" title="Lunch-pass" sub={"Underarmar + pump • "+today.lunch.split(" + ").length+" övningar"} done={lunchDone} color={C.pu} onClick={function(){setData(function(d){return{...d,section:"lunch"}})}}/>
+<SectionBox icon="🔥" title="Uppvärmning" sub="Hållning & längd • 5 min" done={warmupDone} color={C.or} onClick={function(){setData(function(d){return{...d,section:"warmup"}})}}/>
+<SectionBox icon={today.i} title={"Gym — "+today.l} sub={today.t+" • "+exs.length+" övningar"} done={gymDone} color={ph.c} onClick={function(){setData(function(d){return{...d,section:"gym"}})}}/>
+{allDone&&<button onClick={function(){setData(function(d){return{...d,section:"summary"}})}} style={{width:"100%",padding:14,borderRadius:14,background:"linear-gradient(135deg,#00ff88,#00cc66)",border:"none",color:"#060a1f",fontSize:16,fontWeight:800,marginTop:8,boxShadow:"0 4px 20px rgba(0,255,136,0.3)"}}>🎉 Summera dagen</button>}
+{!allDone&&<div style={{display:"flex",gap:8,marginTop:8}}>{[{l:"Kardio",d:cardioDone},{l:"Lunch",d:lunchDone},{l:"Uppv",d:warmupDone},{l:"Gym",d:gymDone}].map(function(x,i){return <div key={i} style={{flex:1,textAlign:"center"}}><div style={{width:"100%",height:4,borderRadius:2,background:x.d?"#00ff88":"rgba(255,255,255,0.06)",marginBottom:4}}></div><span style={{fontSize:8,color:x.d?C.gr:C.s}}>{x.l}</span></div>})}</div>}
+</div>}
+{sec==="cardio"&&<div style={{animation:"slideUp .2s ease-out"}}>
+<button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{background:"none",border:"none",color:C.cy,fontSize:13,fontWeight:600,marginBottom:16}}>← Tillbaka</button>
+<h2 style={{fontSize:20,fontWeight:700,marginBottom:4}}>🏃 Kardio</h2>
+<GC sx={{textAlign:"center",padding:"24px 16px"}}>
+<p style={{fontSize:14,color:C.m,marginBottom:16}}>{today.cardio}</p>
+<button onClick={function(){setData(function(d){return{...d,cardio:1,section:"idle"}})}} style={{padding:"14px 40px",borderRadius:14,background:"linear-gradient(135deg,"+C.cy+",#0088cc)",border:"none",color:"#fff",fontSize:15,fontWeight:700}}>✓ Klar</button>
+</GC>
+</div>}
+{sec==="lunch"&&<div style={{animation:"slideUp .2s ease-out"}}>
+<button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{background:"none",border:"none",color:C.cy,fontSize:13,fontWeight:600,marginBottom:16}}>← Tillbaka</button>
+<h2 style={{fontSize:20,fontWeight:700,marginBottom:4}}>🔄 Lunch-pass</h2>
+<p style={{fontSize:11,color:C.m,marginBottom:12}}>Underarmar + pump för ådror & fullness • ~10 min</p>
+{(function(){var items=today.lunch.split(" + ");var lunchChecks=data.lunchItems||{};var allLD=items.every(function(_,i){return lunchChecks[i]});
+return <div>
+{items.map(function(item,i){var done=lunchChecks[i];return <GC key={i} onClick={function(){setData(function(d){var lc={...(d.lunchItems||{})};lc[i]=!lc[i];var allD=items.every(function(_,j){return lc[j]});return{...d,lunchItems:lc,lunchDone:allD}})}} bc={done?"rgba(0,255,136,0.2)":C.b} sx={{display:"flex",alignItems:"center",gap:12,cursor:"pointer",opacity:done?0.6:1}}>
+<div style={{width:28,height:28,borderRadius:8,background:done?C.gr:"rgba(255,255,255,0.06)",border:"1px solid "+(done?"transparent":C.b),display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:done?"#060a1f":C.s,flexShrink:0}}>{done?"✓":"○"}</div>
+<span style={{fontSize:13,fontWeight:500,textDecoration:done?"line-through":"none"}}>{item.trim()}</span></GC>})}
+{allLD&&<div style={{textAlign:"center",padding:10}}><p style={{fontSize:14,fontWeight:700,color:C.gr}}>✅ Lunch-pass klart!</p>
+<button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{marginTop:8,padding:"10px 24px",borderRadius:12,background:C.pu,border:"none",color:"#fff",fontSize:13,fontWeight:700}}>← Tillbaka</button></div>}
+<TimerWidget color={C.pu} onDone={function(t){setData(function(d){return{...d,lunchDone:true,section:"idle"}})}}/>
+</div>})()}
+</div>}
+{sec==="warmup"&&<div style={{animation:"slideUp .2s ease-out"}}>
+<button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{background:"none",border:"none",color:C.cy,fontSize:13,fontWeight:600,marginBottom:16}}>← Tillbaka</button>
+<h2 style={{fontSize:20,fontWeight:700,marginBottom:4}}>🔥 Uppvärmning</h2>
+<p style={{fontSize:12,color:C.m,marginBottom:16}}>Hållning & längd (~5 min)</p>
+{WARMUP.map(function(w){var done=data.warmup[w.id];var wi=WARMUP_INFO[w.id];var showWi=infoWu===w.id;
+return <GC key={w.id} bc={done?"rgba(0,255,136,0.2)":C.b} sx={{opacity:done?0.6:1}}>
+<div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={function(){setData(function(d){var wu={...d.warmup};wu[w.id]=!wu[w.id];return{...d,warmup:wu}})}}>
+<div style={{width:28,height:28,borderRadius:8,background:done?C.gr:"rgba(255,255,255,0.06)",border:"1px solid "+(done?"transparent":C.b),display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:done?"#060a1f":C.s,flexShrink:0}}>{done?"✓":"○"}</div>
+<span style={{fontSize:13,fontWeight:500,textDecoration:done?"line-through":"none",flex:1}}>{w.t}</span>
+{wi&&<button onClick={function(ev){ev.stopPropagation();setInfoWu(showWi?null:w.id)}} style={{width:32,height:32,borderRadius:8,background:showWi?"rgba(255,107,0,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showWi?"rgba(255,107,0,0.2)":C.b),display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,padding:0}}>
+<ExSvg cat={wi.cat} size={24} color={showWi?C.or:C.s}/></button>}
+</div>
+{showWi&&wi&&<div style={{background:"rgba(255,107,0,0.04)",border:"1px solid rgba(255,107,0,0.12)",borderRadius:12,padding:"12px",marginTop:8}}>
+<div style={{display:"flex",gap:12,alignItems:"center",marginBottom:8}}>
+<div style={{background:"rgba(0,0,0,0.3)",borderRadius:10,padding:6}}><ExSvg cat={wi.cat} size={48} color={C.or}/></div>
+<div><p style={{fontSize:12,fontWeight:700}}>{w.t.split(" ")[0]}</p><p style={{fontSize:10,color:C.gr,marginTop:2}}>{wi.m}</p></div></div>
+<p style={{fontSize:11,color:C.m,lineHeight:"1.5"}}>{wi.t}</p>
+<button onClick={function(ev){ev.stopPropagation();window.open("https://www.youtube.com/results?search_query="+encodeURIComponent(wi.yt),"_blank")}} style={{marginTop:8,padding:"6px 12px",borderRadius:8,background:"rgba(255,0,0,0.1)",border:"1px solid rgba(255,0,0,0.2)",color:"#ff4444",fontSize:11,fontWeight:600}}>📹 YouTube</button>
+</div>}
+</GC>})}
+{warmupDone&&<div style={{textAlign:"center",padding:12}}><p style={{fontSize:14,fontWeight:700,color:C.gr}}>✅ Uppvärmning klar!</p><button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{marginTop:8,padding:"10px 24px",borderRadius:12,background:"linear-gradient(135deg,#00d4ff,#0088cc)",border:"none",color:"#fff",fontSize:13,fontWeight:700}}>← Tillbaka</button></div>}
+</div>}
+{sec==="gym"&&<div style={{animation:"slideUp .2s ease-out"}}>
+<button onClick={function(){setData(function(d){return{...d,section:"idle"}});setEditSet(null);setRestTimer(null)}} style={{background:"none",border:"none",color:C.cy,fontSize:13,fontWeight:600,marginBottom:16}}>← Tillbaka</button>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+<div><h2 style={{fontSize:20,fontWeight:700}}>{today.i} {today.l}</h2><p style={{fontSize:12,color:ph.c,marginTop:2}}>{phase} {ph.l} • {ph.d}</p></div>
+<Ring sz={48} pr={totalSets>0?Math.round(doneSets/totalSets*100):0} co={gymDone?C.gr:C.cy}><span style={{fontSize:11,fontWeight:800}}>{doneSets}/{totalSets}</span></Ring></div>
+{restTimer&&<RestTimer seconds={restTimer} onDone={function(){setRestTimer(null)}}/>}
+{exs.map(function(e,ei){var eDone=0;
+for(var si=0;si<e.sets;si++){var d=data.gym[ei+"_"+si];
+if((e.type==="superset")?(d&&d.a&&d.b):(e.type==="giant")?(d&&d.subs&&d.subs.length===(e.subs||[]).length):!!d)eDone++}
+var lastLogged=null;for(var si2=e.sets-1;si2>=0;si2--){var dl=data.gym[ei+"_"+si2];if(dl){lastLogged=(e.type==="superset"&&dl.a)?dl.a:dl;break}}
+var exCat=getExCat(e.name);var showInfo=infoEx===ei;
+var tb=e.type==="dropset"?{l:"DROP",c:C.or}:e.type==="superset"?{l:"SUPER",c:C.pu}:e.type==="pyramid"?{l:"PYRAMID",c:C.cy}:e.type==="giant"?{l:"GIANT",c:C.rd}:e.type==="21s"?{l:"21s",c:"#fdcb6e"}:null;
+return <GC key={ei} bc={eDone===e.sets&&eDone>0?"rgba(0,255,136,0.15)":tb?tb.c+"22":C.b}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+<div style={{display:"flex",alignItems:"center",gap:10,flex:1,minWidth:0}}>
+<button onClick={function(ev){ev.stopPropagation();setInfoEx(showInfo?null:ei)}} style={{width:36,height:36,borderRadius:10,background:showInfo?"rgba(0,212,255,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showInfo?"rgba(0,212,255,0.2)":C.b),display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,padding:0}}>
+<ExSvg cat={exCat} size={28} color={showInfo?C.cy:C.s}/></button>
+<div><div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}><span style={{fontSize:14,fontWeight:600}}>{e.name}</span>
+{tb&&<span style={{fontSize:8,fontWeight:700,padding:"2px 6px",borderRadius:4,background:tb.c+"22",color:tb.c,letterSpacing:0.5}}>{tb.l}</span>}
+{eDone===e.sets&&eDone>0&&<span>✅</span>}</div>
+<p style={{fontSize:11,color:C.s,marginTop:2}}>{e.sets}×{e.reps}{e.type==="21s"?" (7+7+7)":""}{lastLogged&&lastLogged.kg>0?" • Senast: "+lastLogged.kg+"kg":""}</p>
+{e.type==="superset"&&e.subs&&<p style={{fontSize:10,color:C.pu,marginTop:1}}>{e.subs[0]} ↔ {e.subs[1]}</p>}
+{e.type==="giant"&&e.subs&&<p style={{fontSize:10,color:C.rd,marginTop:1}}>{e.subs.join(" → ")}</p>}
+</div></div>
+<Ring sz={36} pr={e.sets>0?Math.round(eDone/e.sets*100):0} co={eDone===e.sets?C.gr:tb?tb.c:C.cy}><span style={{fontSize:8,fontWeight:700}}>{eDone}/{e.sets}</span></Ring></div>
+{showInfo&&<ExInfoPanel name={e.name} phaseColor={ph.c}/>}
+
+{e.type==="pyramid"&&<div style={{display:"flex",alignItems:"center",gap:4,margin:"8px 0 4px",padding:"6px 10px",background:"rgba(0,212,255,0.04)",borderRadius:8}}>
+{Array.from({length:e.sets}).map(function(_,si){var mid=Math.floor(e.sets/2);var dir=si<mid?"↑":si===mid?"★":"↓";var pct=si<mid?70+Math.round(si*30/mid):si===mid?100:100-Math.round((si-mid)*30/(e.sets-mid-1));
+return <div key={si} style={{flex:1,textAlign:"center"}}><div style={{fontSize:14}}>{dir}</div><div style={{fontSize:8,color:C.cy}}>{pct}%</div></div>})}</div>}
+
+{(e.type==="normal"||e.type==="dropset"||e.type==="pyramid"||e.type==="21s")&&<div>
+<div style={{marginTop:10,display:"flex",flexWrap:"wrap",gap:6}}>
+{Array.from({length:e.sets}).map(function(_,si){var logged=data.gym[ei+"_"+si];var isEditing=editSet&&editSet.ei===ei&&editSet.si===si&&!editSet.isDrop;
+var dropCount=logged&&logged.drops?logged.drops.length:0;
+return <div key={si} style={{display:"inline-flex",alignItems:"center",gap:2}}>
+<button onClick={function(){if(!isEditing){setEditSet({ei:ei,si:si});setRestTimer(null)}}} style={{padding:"8px 12px",borderRadius:10,background:logged?"rgba(0,255,136,0.15)":"rgba(255,255,255,0.06)",border:logged?"1px solid rgba(0,255,136,0.25)":(isEditing?"1px solid "+C.cy:"1px solid rgba(255,255,255,0.08)"),color:logged?C.gr:"#fff",fontSize:11,fontWeight:600}}>
+{logged?<span>{logged.kg>0?logged.kg+"kg×"+logged.reps:"Set "+(si+1)+" ✓"}</span>:<span>Set {si+1}</span>}</button>
+{e.type==="dropset"&&logged&&dropCount>0&&<span style={{fontSize:9,color:C.or,fontWeight:700}}>+{dropCount}D</span>}
+</div>})}
+</div>
+{editSet&&editSet.ei===ei&&!editSet.isDrop&&<SetInput setNum={editSet.si+1} targetReps={e.reps} lastKg={lastLogged?lastLogged.kg:undefined}
+onCancel={function(){setEditSet(null)}}
+onSave={function(kg,reps){setData(function(d){var g={...d.gym};var prev=g[ei+"_"+editSet.si];g[ei+"_"+editSet.si]={kg:kg,reps:reps,drops:prev&&prev.drops?prev.drops:[]};return{...d,gym:g}});setEditSet(null);setRestTimer(ph.rest)}}/>}
+
+{e.type==="dropset"&&(function(){var lastSi=null;for(var si3=e.sets-1;si3>=0;si3--){if(data.gym[ei+"_"+si3]){lastSi=si3;break}}
+if(lastSi===null)return null;
+var logged=data.gym[ei+"_"+lastSi];var drops=logged.drops||[];
+var isAddingDrop=editSet&&editSet.ei===ei&&editSet.si===lastSi&&editSet.isDrop;
+return <div style={{marginTop:6,paddingLeft:12,borderLeft:"2px solid "+C.or}}>
+{drops.map(function(dr,di){return <div key={di} style={{fontSize:11,color:C.or,padding:"2px 0"}}>Drop {di+1}: {dr.kg}kg × {dr.reps}</div>})}
+{!isAddingDrop&&<button onClick={function(){setEditSet({ei:ei,si:lastSi,isDrop:true})}} style={{fontSize:10,color:C.or,background:"rgba(255,107,0,0.08)",border:"1px solid rgba(255,107,0,0.15)",borderRadius:8,padding:"4px 10px",marginTop:4,fontWeight:600}}>➕ Dropset</button>}
+{isAddingDrop&&<SetInput setNum={"Drop "+(drops.length+1)} targetReps={e.reps} lastKg={logged.kg?Math.round(logged.kg*0.7):undefined}
+onCancel={function(){setEditSet(null)}}
+onSave={function(kg,reps){setData(function(d){var g={...d.gym};var entry={...g[ei+"_"+lastSi]};if(!entry.drops)entry.drops=[];entry.drops=[...entry.drops,{kg:kg,reps:reps}];g[ei+"_"+lastSi]=entry;return{...d,gym:g}});setEditSet(null)}}/>}
+</div>})()}
+</div>}
+
+{e.type==="superset"&&e.subs&&<div style={{marginTop:10}}>
+{Array.from({length:e.sets}).map(function(_,si){var logged=data.gym[ei+"_"+si]||{};var aD=logged.a,bD=logged.b,setDone=aD&&bD;
+var isEditA=editSet&&editSet.ei===ei&&editSet.si===si&&editSet.sub==="a";
+var isEditB=editSet&&editSet.ei===ei&&editSet.si===si&&editSet.sub==="b";
+return <div key={si} style={{marginBottom:8,padding:"8px 10px",borderRadius:10,background:setDone?"rgba(139,92,246,0.08)":"rgba(255,255,255,0.02)",border:"1px solid "+(setDone?"rgba(139,92,246,0.15)":"rgba(255,255,255,0.04)")}}>
+<div style={{fontSize:9,color:C.pu,fontWeight:700,marginBottom:6}}>SET {si+1}{setDone?" ✅":""}</div>
+<div style={{display:"flex",gap:6}}>
+<button onClick={function(){setEditSet({ei:ei,si:si,sub:"a"});setRestTimer(null)}} style={{flex:1,padding:"7px 8px",borderRadius:8,background:aD?"rgba(139,92,246,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(aD?"rgba(139,92,246,0.25)":(isEditA?C.pu+"66":C.b)),color:aD?C.pu:"#fff",fontSize:10,fontWeight:600,textAlign:"left"}}>
+<div style={{fontSize:8,color:C.s}}>A: {e.subs[0]}</div>{aD?aD.kg+"kg×"+aD.reps:"Logga"}</button>
+<button onClick={function(){setEditSet({ei:ei,si:si,sub:"b"});setRestTimer(null)}} style={{flex:1,padding:"7px 8px",borderRadius:8,background:bD?"rgba(139,92,246,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(bD?"rgba(139,92,246,0.25)":(isEditB?C.pu+"66":C.b)),color:bD?C.pu:"#fff",fontSize:10,fontWeight:600,textAlign:"left"}}>
+<div style={{fontSize:8,color:C.s}}>B: {e.subs[1]}</div>{bD?bD.kg+"kg×"+bD.reps:"Logga"}</button></div>
+{isEditA&&<SetInput setNum={"A"+(si+1)} targetReps={e.reps} lastKg={undefined}
+onCancel={function(){setEditSet(null)}} onSave={function(kg,reps){setData(function(d){var g={...d.gym};var entry=g[ei+"_"+si]||{};entry.a={kg:kg,reps:reps};g[ei+"_"+si]=entry;return{...d,gym:g}});setEditSet({ei:ei,si:si,sub:"b"})}}/>}
+{isEditB&&<SetInput setNum={"B"+(si+1)} targetReps={e.reps} lastKg={undefined}
+onCancel={function(){setEditSet(null)}} onSave={function(kg,reps){setData(function(d){var g={...d.gym};var entry=g[ei+"_"+si]||{};entry.b={kg:kg,reps:reps};g[ei+"_"+si]=entry;return{...d,gym:g}});setEditSet(null);setRestTimer(ph.rest)}}/>}
+</div>})}
+</div>}
+
+{e.type==="giant"&&e.subs&&<div style={{marginTop:10}}>
+{Array.from({length:e.sets}).map(function(_,si){var logged=data.gym[ei+"_"+si]||{};var loggedSubs=logged.subs||[];var setDone=loggedSubs.length===e.subs.length;
+return <div key={si} style={{marginBottom:8,padding:"8px 10px",borderRadius:10,background:setDone?"rgba(255,107,107,0.08)":"rgba(255,255,255,0.02)",border:"1px solid "+(setDone?"rgba(255,107,107,0.15)":"rgba(255,255,255,0.04)")}}>
+<div style={{fontSize:9,color:C.rd,fontWeight:700,marginBottom:6}}>SET {si+1} — {loggedSubs.length}/{e.subs.length}{setDone?" ✅":""}</div>
+{e.subs.map(function(sub,subi){var subLogged=loggedSubs[subi];var isEditG=editSet&&editSet.ei===ei&&editSet.si===si&&editSet.gIdx===subi;
+return <div key={subi}>
+<button onClick={function(){setEditSet({ei:ei,si:si,gIdx:subi});setRestTimer(null)}} style={{width:"100%",padding:"6px 10px",borderRadius:8,marginBottom:4,background:subLogged?"rgba(255,107,107,0.1)":"rgba(255,255,255,0.03)",border:"1px solid "+(subLogged?"rgba(255,107,107,0.2)":C.b),color:subLogged?C.rd:"#fff",fontSize:11,fontWeight:500,textAlign:"left",display:"flex",justifyContent:"space-between"}}>
+<span>{sub}</span><span>{subLogged?subLogged.kg+"kg×"+subLogged.reps:"—"}</span></button>
+{isEditG&&<SetInput setNum={sub} targetReps={e.reps} lastKg={undefined}
+onCancel={function(){setEditSet(null)}} onSave={function(kg,reps){setData(function(d){var g={...d.gym};var entry=g[ei+"_"+si]||{};var ss=entry.subs?[...entry.subs]:[];ss[subi]={kg:kg,reps:reps};entry.subs=ss;g[ei+"_"+si]=entry;return{...d,gym:g}});
+if(subi<e.subs.length-1)setEditSet({ei:ei,si:si,gIdx:subi+1});else{setEditSet(null);setRestTimer(ph.rest)}}}/>}
+</div>})}
+</div>})}
+</div>}
+
+</GC>})}
+{gymDone&&<div style={{textAlign:"center",padding:12}}><p style={{fontSize:16,fontWeight:800,color:C.gr}}>💪 Alla övningar klara!</p></div>}
+</div>}
+{sec==="summary"&&<div style={{animation:"slideUp .2s ease-out"}}>
+<h2 style={{fontSize:22,fontWeight:700,marginBottom:16}}>🎉 Dagens Summering</h2>
+<GC sx={{textAlign:"center",padding:"20px 16px"}}><p style={{fontSize:36,fontWeight:800,color:C.gr}}>💪</p><p style={{fontSize:18,fontWeight:700,marginTop:8}}>Bra jobbat KM!</p><p style={{fontSize:12,color:C.m,marginTop:4}}>{DN[dow]} — {phase} {ph.l}</p></GC>
+{(function(){var totalVol=0,totalReps=0,maxKg=0;
+function addSet(s){if(s&&s.kg>0&&s.reps>0){totalVol+=s.kg*s.reps;totalReps+=s.reps;if(s.kg>maxKg)maxKg=s.kg}else if(s&&s.reps>0){totalReps+=s.reps}}
+Object.keys(data.gym).forEach(function(k){var s=data.gym[k];if(!s)return;
+if(s.a)addSet(s.a);if(s.b)addSet(s.b);
+if(s.subs)s.subs.forEach(addSet);
+if(s.kg!==undefined)addSet(s);
+if(s.drops)s.drops.forEach(addSet)});
+var calEst=Math.round((data.cardio?120:0)+doneSets*12);
+return <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+<GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:data.cardio?C.gr:C.s}}>{data.cardio?"✓":"—"}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Kardio</p></GC>
+<GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:C.cy}}>{doneSets}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Set loggade</p></GC>
+<GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:C.gr}}>{totalVol>0?(totalVol>=1000?Math.round(totalVol/100)/10+"t":totalVol+"kg"):"—"}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Total volym</p></GC>
+<GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:C.or}}>~{calEst}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>kcal (estimat)</p></GC>
+{maxKg>0&&<GC sx={{textAlign:"center",padding:"14px 10px",gridColumn:"1/3"}}><p style={{fontSize:22,fontWeight:800,color:C.pu}}>{maxKg} kg</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Tyngsta vikt idag</p></GC>}
+</div>})()}
+<button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{width:"100%",padding:13,borderRadius:14,background:"rgba(255,255,255,0.06)",border:"1px solid "+C.b,color:C.s,fontSize:14,fontWeight:600,marginTop:12}}>← Tillbaka</button>
+</div>}
+</div>}
+function ProgramTab(p){var ws=h(p.wk),viewWk=ws[0],setViewWk=ws[1];var phase=PHASE_MAP[viewWk];var ph=PH[phase];var es=h(null),exp=es[0],setExp=es[1];
+var typeBadge=function(type){if(type==="normal")return null;var tc={dropset:{l:"DROP",c:C.or},superset:{l:"SUPER",c:C.pu},pyramid:{l:"PYRAMID",c:C.cy},"21s":{l:"21s",c:"#fdcb6e"},giant:{l:"GIANT",c:C.rd}};
+var tb=tc[type];if(!tb)return null;return <span style={{fontSize:7,fontWeight:800,padding:"2px 5px",borderRadius:4,background:tb.c+"20",color:tb.c,marginLeft:6}}>{tb.l}</span>};
+return <div>
+<h1 style={{fontSize:24,fontWeight:700,marginBottom:16}}>📋 Program</h1>
+<div style={{display:"flex",gap:6,marginBottom:16}}>{[1,2,3,4].map(function(w){var wph=PHASE_MAP[w],wc=PH[wph].c;return <button key={w} onClick={function(){setViewWk(w)}} style={{flex:1,padding:"10px 0",borderRadius:12,fontSize:11,fontWeight:700,border:"1px solid "+(viewWk===w?wc+"66":C.b),background:viewWk===w?wc+"15":"transparent",color:viewWk===w?wc:C.s}}><div>{wph}</div><div style={{fontSize:8,marginTop:2}}>V{w}</div></button>})}</div>
+<p style={{fontSize:11,color:ph.c,fontWeight:700,marginBottom:12}}>{phase} {ph.l} — {ph.d}</p>
+{DAYS.map(function(d,i){var isToday=i===p.dow;var dayExs=(PRG[i][phase]||[]).map(parseEx);var open=exp===i;
+return <GC key={i} onClick={function(){setExp(open?null:i)}} bc={isToday?"rgba(0,212,255,0.2)":open?C.cy+"22":C.b} sx={{cursor:"pointer"}}>
+<div style={{display:"flex",alignItems:"center",gap:12}}>
+<div style={{width:40,height:40,borderRadius:10,background:isToday?"rgba(0,212,255,0.15)":"rgba(255,255,255,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>{d.i}</div>
+<div style={{flex:1}}><p style={{fontSize:13,fontWeight:600}}>{d.d} — {d.l}</p><p style={{fontSize:10,color:C.s,marginTop:1}}>{d.t} • {dayExs.length} övn</p></div>
+{isToday&&<span style={{fontSize:8,color:C.cy,fontWeight:700,padding:"2px 6px",borderRadius:4,background:"rgba(0,212,255,0.1)"}}>IDAG</span>}
+<span style={{fontSize:16,color:C.s}}>{open?"▼":"›"}</span></div>
+{open&&<div style={{marginTop:12,borderTop:"1px solid rgba(255,255,255,0.06)",paddingTop:10}} onClick={function(e){e.stopPropagation()}}>
+{d.cardio&&<div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8,padding:"6px 10px",borderRadius:8,background:"rgba(0,212,255,0.06)"}}><span style={{fontSize:12}}>🏃</span><span style={{fontSize:10,color:C.cy}}>{d.cardio}</span></div>}
+{d.lunch&&d.lunch!=="Vila/stretching"&&<div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8,padding:"6px 10px",borderRadius:8,background:"rgba(139,92,246,0.06)"}}><span style={{fontSize:12}}>🥪</span><span style={{fontSize:10,color:C.pu}}>Lunch: {d.lunch}</span></div>}
+{d.pre&&<div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8,padding:"6px 10px",borderRadius:8,background:"rgba(255,107,0,0.06)"}}><span style={{fontSize:12}}>🥊</span><span style={{fontSize:10,color:C.or}}>{d.pre}</span></div>}
+<p style={{fontSize:9,fontWeight:700,color:C.s,marginBottom:6}}>ÖVNINGAR — {phase} {ph.l}</p>
+{dayExs.map(function(e,ei){return <div key={ei} style={{padding:"7px 0",borderBottom:ei<dayExs.length-1?"1px solid rgba(255,255,255,0.04)":"none",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+<div style={{display:"flex",alignItems:"center"}}><span style={{fontSize:13}}>{e.name}</span>{typeBadge(e.type)}</div>
+<span style={{fontSize:11,color:ph.c,fontWeight:600,fontVariantNumeric:"tabular-nums"}}>{e.sets}×{e.reps}</span></div>})}
+{dayExs.length===0&&<p style={{fontSize:11,color:C.s,textAlign:"center",padding:8}}>Valfria övningar</p>}
+</div>}
+</GC>})}</div>}
+function HistoryTab(){
+var bodyData=LS("body",{entries:[],photos:[]});var bEntries=bodyData.entries||[];
+var allDays=[];try{for(var i=0;i<localStorage.length;i++){var lk=localStorage.key(i);
+if(lk&&lk.startsWith("gymish_day_")){try{var dd=JSON.parse(localStorage.getItem(lk));var pp=lk.replace("gymish_day_","").split("_");
+allDays.push({date:pp[0],dow:parseInt(pp[1]),data:dd})}catch(e){}}}}catch(e){}
+allDays.sort(function(a,b){return a.date.localeCompare(b.date)});
+
+var prs={};var volByDay=[];
+allDays.forEach(function(day){var gym=day.data.gym||{};var dayVol=0;var dayExs=PRG[day.dow]?Object.keys(PRG[day.dow]).length>0:false;
+Object.keys(gym).forEach(function(k){var s=gym[k];if(!s)return;
+function trackPr(name,kg){if(kg>0){if(!prs[name]||kg>prs[name].kg)prs[name]={kg:kg,date:day.date}}}
+function addVol(kg,reps){if(kg>0&&reps>0)dayVol+=kg*reps}
+if(s.kg!==undefined){var eidx=parseInt(k.split("_")[0]);var phase=PHASE_MAP[LS("week",1)];var exList=(PRG[day.dow]&&PRG[day.dow][phase]||[]).map(parseEx);
+if(exList[eidx])trackPr(exList[eidx].name,s.kg);addVol(s.kg||0,s.reps||0);if(s.drops)s.drops.forEach(function(d){addVol(d.kg||0,d.reps||0)})}
+if(s.a){addVol(s.a.kg||0,s.a.reps||0);addVol(s.b?s.b.kg:0,s.b?s.b.reps:0)}
+if(s.subs)s.subs.forEach(function(sub){if(sub)addVol(sub.kg||0,sub.reps||0)})});
+if(dayVol>0)volByDay.push({date:day.date,vol:dayVol,dow:day.dow})});
+
+var prList=Object.entries(prs).sort(function(a,b){return b[1].kg-a[1].kg}).slice(0,10);
+var muscleCounts={};allDays.forEach(function(day){if(!day.data.gym||Object.keys(day.data.gym).length===0)return;
+var dayInfo=DAYS[day.dow];if(dayInfo){var parts=dayInfo.l.split(/[+&]/);parts.forEach(function(p){var m=p.trim().toLowerCase();muscleCounts[m]=(muscleCounts[m]||0)+1})}});
+var muscleList=Object.entries(muscleCounts).sort(function(a,b){return b[1]-a[1]});
+var maxMuscle=muscleList.length>0?muscleList[0][1]:1;
+
+var ss=h("overview"),sub=ss[0],setSub=ss[1];
+return <div>
+<h1 style={{fontSize:24,fontWeight:700,marginBottom:12}}>📊 Historik</h1>
+<div style={{display:"flex",gap:4,marginBottom:14}}>
+{[{k:"overview",l:"Översikt"},{k:"week",l:"Vecka"},{k:"cycle",l:"Cykel"},{k:"prs",l:"PRs"},{k:"muscle",l:"Muskler"}].map(function(t){
+return <button key={t.k} onClick={function(){setSub(t.k)}} style={{flex:1,padding:"8px 0",borderRadius:8,border:sub===t.k?"1px solid "+C.cy:"1px solid "+C.b,background:sub===t.k?"rgba(0,212,255,0.1)":C.b,color:sub===t.k?C.cy:C.s,fontSize:11,fontWeight:600}}>{t.l}</button>})}
+</div>
+
+{sub==="overview"&&<div>
+{bEntries.length>1&&<GC>
+<p style={{fontSize:11,fontWeight:700,color:C.cy,marginBottom:8}}>VIKT-TREND</p>
+{(function(){var wEntries=bEntries.filter(function(e){return e.weight});if(wEntries.length<2)return <p style={{fontSize:11,color:C.s}}>Logga vikt minst 2 gånger</p>;
+var vals=wEntries.map(function(e){return e.weight});var mn=Math.min.apply(null,vals)-1;var mx=Math.max.apply(null,vals)+1;var range=mx-mn||1;
+var w=280,ht=80;var pts=vals.map(function(v,i){return(i/(vals.length-1))*w+","+(ht-(v-mn)/range*ht)}).join(" ");
+return <div><svg width="100%" viewBox={"0 0 "+w+" "+(ht+20)} style={{display:"block"}}>
+<polyline points={pts} fill="none" stroke={C.cy} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+{vals.map(function(v,i){var x=(i/(vals.length-1))*w,y=ht-(v-mn)/range*ht;
+return <circle key={i} cx={x} cy={y} r="3" fill={C.cy}/>})}
+<text x="0" y={ht+14} fontSize="9" fill={C.s}>{wEntries[0].date.slice(5)}</text>
+<text x={w} y={ht+14} fontSize="9" fill={C.s} textAnchor="end">{wEntries[wEntries.length-1].date.slice(5)}</text>
+</svg>
+<div style={{display:"flex",justifyContent:"space-between",fontSize:10,color:C.m,marginTop:4}}>
+<span>Start: {vals[0]}kg</span><span>Nu: {vals[vals.length-1]}kg</span>
+<span style={{color:vals[vals.length-1]<vals[0]?C.gr:C.or}}>{Math.round((vals[vals.length-1]-vals[0])*10)/10}kg</span></div></div>})()}
+</GC>}
+
+{volByDay.length>0&&<GC>
+<p style={{fontSize:11,fontWeight:700,color:C.gr,marginBottom:8}}>VOLYM PER PASS (kg)</p>
+{(function(){var recent=volByDay.slice(-14);var maxV=Math.max.apply(null,recent.map(function(d){return d.vol}));
+return <div style={{display:"flex",gap:2,alignItems:"flex-end",height:80}}>
+{recent.map(function(d,i){var h=Math.max(4,d.vol/maxV*70);
+return <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}}>
+<div style={{width:"100%",height:h,background:C.gr,borderRadius:2,opacity:0.7}}/>
+<span style={{fontSize:7,color:C.s}}>{DS[d.dow]}</span></div>})}
+</div>})()}
+</GC>}
+
+{volByDay.length===0&&bEntries.length<2&&<GC sx={{textAlign:"center",padding:"30px 16px"}}>
+<p style={{fontSize:14,color:C.m}}>Logga pass och mått för att se grafer</p>
+<p style={{fontSize:11,color:C.s,marginTop:4}}>Data byggs automatiskt</p></GC>}
+
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+<GC sx={{textAlign:"center",padding:"12px 8px"}}><p style={{fontSize:9,color:C.s}}>PASS LOGGADE</p><p style={{fontSize:22,fontWeight:800,color:C.cy}}>{allDays.filter(function(d){return d.data.gym&&Object.keys(d.data.gym).length>0}).length}</p></GC>
+<GC sx={{textAlign:"center",padding:"12px 8px"}}><p style={{fontSize:9,color:C.s}}>TOTAL VOLYM</p><p style={{fontSize:22,fontWeight:800,color:C.gr}}>{(function(){var tv=volByDay.reduce(function(a,d){return a+d.vol},0);return tv>=1000?Math.round(tv/100)/10+"t":tv+"kg"})()}</p></GC>
+</div></div>}
+
+{sub==="prs"&&<div>
+<p style={{fontSize:11,fontWeight:700,color:C.or,marginBottom:8}}>TYNGSTA LYFT</p>
+{prList.length===0&&<GC sx={{textAlign:"center",padding:"20px"}}><p style={{fontSize:12,color:C.s}}>Logga set med KG för att se PRs</p></GC>}
+{prList.map(function(pr,i){return <GC key={i} sx={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 14px"}}>
+<div style={{display:"flex",alignItems:"center",gap:10}}>
+<div style={{width:28,height:28,borderRadius:8,background:i<3?"rgba(255,107,0,0.15)":"rgba(255,255,255,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800,color:i<3?C.or:C.s}}>{i+1}</div>
+<div><p style={{fontSize:13,fontWeight:600}}>{pr[0]}</p><p style={{fontSize:9,color:C.s}}>{pr[1].date}</p></div></div>
+<span style={{fontSize:16,fontWeight:800,color:i===0?C.or:C.cy,fontVariantNumeric:"tabular-nums"}}>{pr[1].kg}kg</span>
+</GC>})}
+</div>}
+
+{sub==="muscle"&&<div>
+<p style={{fontSize:11,fontWeight:700,color:C.pu,marginBottom:8}}>MUSKELGRUPP-FREKVENS</p>
+{muscleList.length===0&&<GC sx={{textAlign:"center",padding:"20px"}}><p style={{fontSize:12,color:C.s}}>Logga pass för att se muskeldata</p></GC>}
+{muscleList.map(function(m,i){var pct=Math.round(m[1]/maxMuscle*100);
+return <GC key={i} sx={{padding:"10px 14px"}}>
+<div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+<span style={{fontSize:12,fontWeight:600,textTransform:"capitalize"}}>{m[0]}</span>
+<span style={{fontSize:11,color:C.pu,fontWeight:700}}>{m[1]}×</span></div>
+<div style={{height:6,borderRadius:3,background:"rgba(255,255,255,0.06)",overflow:"hidden"}}>
+<div style={{height:"100%",width:pct+"%",background:C.pu,borderRadius:3}}/></div>
+</GC>})}
+</div>}
+
+{sub==="week"&&<div>{(function(){
+var now=new Date();var todayStr=now.toISOString().slice(0,10);
+var mondayOff=(now.getDay()+6)%7;var monday=new Date(now);monday.setDate(monday.getDate()-mondayOff);monday.setHours(0,0,0,0);
+function weekKey(d){var m=new Date(d);var off=(m.getDay()+6)%7;m.setDate(m.getDate()-off);return m.toISOString().slice(0,10)}
+var thisWeekKey=weekKey(now);
+var weekBuckets={};
+allDays.forEach(function(day){var wk=weekKey(new Date(day.date));if(!weekBuckets[wk])weekBuckets[wk]={days:[],vol:0,sessions:0};
+weekBuckets[wk].days.push(day);
+var gym=day.data.gym||{};var dv=0;var hasSets=false;
+Object.keys(gym).forEach(function(k){var s=gym[k];if(!s)return;
+if(s.kg!==undefined){dv+=(s.kg||0)*(s.reps||0);hasSets=true;if(s.drops)s.drops.forEach(function(d){dv+=(d.kg||0)*(d.reps||0)})}
+if(s.a){dv+=(s.a.kg||0)*(s.a.reps||0);dv+=(s.b?(s.b.kg||0)*(s.b.reps||0):0);hasSets=true}
+if(s.subs){s.subs.forEach(function(sub){if(sub){dv+=(sub.kg||0)*(sub.reps||0);hasSets=true}})}});
+weekBuckets[wk].vol+=dv;if(hasSets)weekBuckets[wk].sessions++});
+var tw=weekBuckets[thisWeekKey]||{days:[],vol:0,sessions:0};
+var sortedWeeks=Object.keys(weekBuckets).sort().reverse();
+var prevWeeks=sortedWeeks.filter(function(w){return w<thisWeekKey}).slice(0,4);
+var streak=0;var checkDate=new Date(now);checkDate.setDate(checkDate.getDate()-1);
+for(var si=0;si<60;si++){var cd=checkDate.toISOString().slice(0,10);var found=allDays.find(function(d){return d.date===cd&&d.data.gym&&Object.keys(d.data.gym).length>0});
+if(found)streak++;else if(checkDate.getDay()!==0)break;
+checkDate.setDate(checkDate.getDate()-1)}
+var todayLogged=allDays.find(function(d){return d.date===todayStr&&d.data.gym&&Object.keys(d.data.gym).length>0});
+if(todayLogged)streak++;
+var avgVol=prevWeeks.length>0?Math.round(prevWeeks.reduce(function(a,w){return a+weekBuckets[w].vol},0)/prevWeeks.length):0;
+var volDiff=avgVol>0?Math.round((tw.vol-avgVol)/avgVol*100):0;
+return <div>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
+<GC sx={{textAlign:"center",padding:"12px 8px"}}><p style={{fontSize:9,color:C.s}}>PASS</p><p style={{fontSize:24,fontWeight:800,color:C.cy}}>{tw.sessions}</p><p style={{fontSize:9,color:C.s}}>av 6</p></GC>
+<GC sx={{textAlign:"center",padding:"12px 8px"}}><p style={{fontSize:9,color:C.s}}>VOLYM</p><p style={{fontSize:24,fontWeight:800,color:C.gr}}>{tw.vol>=1000?Math.round(tw.vol/100)/10+"t":tw.vol+"kg"}</p>
+{volDiff!==0&&<p style={{fontSize:9,color:volDiff>0?C.gr:C.or}}>{volDiff>0?"+":""}{volDiff}%</p>}</GC>
+<GC sx={{textAlign:"center",padding:"12px 8px"}}><p style={{fontSize:9,color:C.s}}>STREAK</p><p style={{fontSize:24,fontWeight:800,color:C.or}}>{streak}</p><p style={{fontSize:9,color:C.s}}>dagar</p></GC>
+</div>
+
+{tw.sessions>0&&<GC><p style={{fontSize:11,fontWeight:700,color:C.cy,marginBottom:8}}>DENNA VECKA</p>
+{tw.days.filter(function(d){return d.data.gym&&Object.keys(d.data.gym).length>0}).map(function(d){
+var dv=0;var gym=d.data.gym||{};Object.keys(gym).forEach(function(k){var s=gym[k];if(!s)return;
+if(s.kg!==undefined){dv+=(s.kg||0)*(s.reps||0);if(s.drops)s.drops.forEach(function(dr){dv+=(dr.kg||0)*(dr.reps||0)})}
+if(s.a){dv+=(s.a.kg||0)*(s.a.reps||0);dv+=(s.b?(s.b.kg||0)*(s.b.reps||0):0)}
+if(s.subs)s.subs.forEach(function(sub){if(sub)dv+=(sub.kg||0)*(sub.reps||0)})});
+return <div key={d.date} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+<div><span style={{fontSize:12,fontWeight:600}}>{DN[d.dow]}</span><span style={{fontSize:10,color:C.s,marginLeft:6}}>{DAYS[d.dow]?DAYS[d.dow].l:""}</span></div>
+<span style={{fontSize:12,fontWeight:700,color:C.gr,fontVariantNumeric:"tabular-nums"}}>{dv>=1000?Math.round(dv/100)/10+"t":dv+"kg"}</span>
+</div>})}</GC>}
+
+{prevWeeks.length>0&&<GC><p style={{fontSize:11,fontWeight:700,color:C.s,marginBottom:8}}>TIDIGARE VECKOR</p>
+{prevWeeks.map(function(wk){var wb=weekBuckets[wk];var wDate=new Date(wk+"T12:00");
+return <div key={wk} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+<div><span style={{fontSize:12,fontWeight:600,color:C.m}}>{wDate.getDate()+"/"+(wDate.getMonth()+1)}</span></div>
+<div style={{display:"flex",gap:16}}>
+<span style={{fontSize:11,color:C.cy}}>{wb.sessions} pass</span>
+<span style={{fontSize:11,fontWeight:700,color:C.gr,fontVariantNumeric:"tabular-nums"}}>{wb.vol>=1000?Math.round(wb.vol/100)/10+"t":wb.vol+"kg"}</span>
+</div></div>})}</GC>}
+
+{tw.sessions===0&&<GC sx={{textAlign:"center",padding:"20px"}}><p style={{fontSize:12,color:C.s}}>Inga pass loggade denna vecka ännu</p></GC>}
+</div>})()}</div>}
+
+{sub==="cycle"&&<div>{(function(){
+var phaseData={1:{vol:0,sessions:0,maxKg:0,exercises:0},2:{vol:0,sessions:0,maxKg:0,exercises:0},3:{vol:0,sessions:0,maxKg:0,exercises:0},4:{vol:0,sessions:0,maxKg:0,exercises:0}};
+allDays.forEach(function(day){var gym=day.data.gym||{};var dv=0;var maxK=0;var hasSets=false;var exCount=0;
+Object.keys(gym).forEach(function(k){var s=gym[k];if(!s)return;
+if(s.kg!==undefined){dv+=(s.kg||0)*(s.reps||0);if(s.kg>maxK)maxK=s.kg;hasSets=true;exCount++;
+if(s.drops)s.drops.forEach(function(d){dv+=(d.kg||0)*(d.reps||0)})}
+if(s.a){dv+=(s.a.kg||0)*(s.a.reps||0);if(s.a.kg>maxK)maxK=s.a.kg;
+dv+=(s.b?(s.b.kg||0)*(s.b.reps||0):0);hasSets=true;exCount++}
+if(s.subs){s.subs.forEach(function(sub){if(sub){dv+=(sub.kg||0)*(sub.reps||0);if(sub.kg>maxK)maxK=sub.kg;hasSets=true;exCount++}})}});
+if(hasSets){var ph=day.data.phase||"+";var phKey=1;
+if(ph==="++")phKey=2;else if(ph==="+++")phKey=3;else if(ph==="D")phKey=4;else phKey=1;
+if(!phaseData[phKey])phKey=1;
+phaseData[phKey].vol+=dv;phaseData[phKey].sessions++;
+if(maxK>phaseData[phKey].maxKg)phaseData[phKey].maxKg=maxK;
+phaseData[phKey].exercises+=exCount}});
+var phases=[{k:1,ph:"+",label:"STYRKA",c:C.cy},{k:2,ph:"++",label:"HYPERTROFI",c:C.gr},{k:3,ph:"+++",label:"PUMP",c:C.or},{k:4,ph:"D",label:"DELOAD",c:C.pu}];
+var maxVol=Math.max.apply(null,phases.map(function(p){return phaseData[p.k].vol}));if(maxVol===0)maxVol=1;
+var hasData=phases.some(function(p){return phaseData[p.k].sessions>0});
+return <div>
+<p style={{fontSize:11,fontWeight:700,color:C.cy,marginBottom:12}}>VOLYM PER FAS</p>
+{hasData?<div style={{display:"flex",gap:6,alignItems:"flex-end",height:120,marginBottom:16}}>
+{phases.map(function(p){var d=phaseData[p.k];var h=d.vol>0?Math.max(20,d.vol/maxVol*100):8;
+return <div key={p.k} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+<span style={{fontSize:10,fontWeight:700,color:p.c,fontVariantNumeric:"tabular-nums"}}>{d.vol>=1000?Math.round(d.vol/100)/10+"t":d.vol>0?d.vol+"kg":"—"}</span>
+<div style={{width:"100%",height:h,background:p.c,borderRadius:6,opacity:d.vol>0?0.8:0.15}}/>
+<span style={{fontSize:10,fontWeight:700,color:d.vol>0?p.c:C.s}}>{p.ph}</span>
+</div>})}
+</div>:<GC sx={{textAlign:"center",padding:"20px",marginBottom:14}}><p style={{fontSize:12,color:C.s}}>Logga pass i olika faser för cykel-jämförelse</p></GC>}
+
+{phases.map(function(p){var d=phaseData[p.k];if(d.sessions===0)return null;
+var avgVol=Math.round(d.vol/d.sessions);
+return <GC key={p.k} sx={{padding:"12px 14px"}} bc={p.c+"33"}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+<div style={{display:"flex",alignItems:"center",gap:8}}>
+<div style={{width:32,height:32,borderRadius:10,background:p.c+"20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:p.c}}>{p.ph}</div>
+<div><p style={{fontSize:13,fontWeight:700,color:p.c}}>{p.label}</p><p style={{fontSize:9,color:C.s}}>{PH[p.ph].d}</p></div>
+</div></div>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6}}>
+<div style={{textAlign:"center"}}><p style={{fontSize:8,color:C.s}}>PASS</p><p style={{fontSize:16,fontWeight:800,color:"#fff"}}>{d.sessions}</p></div>
+<div style={{textAlign:"center"}}><p style={{fontSize:8,color:C.s}}>SNITT/PASS</p><p style={{fontSize:16,fontWeight:800,color:"#fff"}}>{avgVol>=1000?Math.round(avgVol/100)/10+"t":avgVol+"kg"}</p></div>
+<div style={{textAlign:"center"}}><p style={{fontSize:8,color:C.s}}>MAX KG</p><p style={{fontSize:16,fontWeight:800,color:p.c}}>{d.maxKg}kg</p></div>
+</div></GC>})}
+</div>})()}</div>}
+
+</div>}
+function BodyTab(){
+var bs=h(function(){return LS("body",{entries:[],photos:[]})}),body=bs[0],setBodyRaw=bs[1];
+var ms=h(false),adding=ms[0],setAdding=ms[1];
+var ps=h(false),addPhoto=ps[0],setAddPhoto=ps[1];
+var fs=h({weight:"",waist:"",arms:"",chest:""}),form=fs[0],setForm=fs[1];
+var fileRef=ur(null);
+function setBody(fn){setBodyRaw(function(prev){var next=typeof fn==="function"?fn(prev):fn;SS("body",next);return next})}
+var entries=body.entries||[];var photos=body.photos||[];
+var latest=entries.length>0?entries[entries.length-1]:null;
+var prev=entries.length>1?entries[entries.length-2]:null;
+function diff(key){if(!latest||!prev||!latest[key]||!prev[key])return null;var d=Math.round((latest[key]-prev[key])*10)/10;return d>0?"+"+d:d<0?""+d:null}
+function saveEntry(){var e={date:new Date().toISOString().slice(0,10)};var has=false;
+if(form.weight){e.weight=parseFloat(form.weight);has=true}
+if(form.waist){e.waist=parseFloat(form.waist);has=true}
+if(form.arms){e.arms=parseFloat(form.arms);has=true}
+if(form.chest){e.chest=parseFloat(form.chest);has=true}
+if(!has)return;
+var existing=entries.findIndex(function(x){return x.date===e.date});
+if(existing>=0){var merged={...entries[existing],...e};var ne=[...entries];ne[existing]=merged;setBody({...body,entries:ne})}
+else{setBody({...body,entries:[...entries,e]})}
+setForm({weight:"",waist:"",arms:"",chest:""});setAdding(false)}
+function handlePhoto(ev){var file=ev.target.files&&ev.target.files[0];if(!file)return;
+var reader=new FileReader();reader.onload=function(re){
+var img=new Image();img.onload=function(){
+var canvas=document.createElement("canvas");var ratio=Math.min(300/img.width,300/img.height,1);
+canvas.width=img.width*ratio;canvas.height=img.height*ratio;
+canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+var thumb=canvas.toDataURL("image/jpeg",0.5);
+setBody(function(b){return{...b,photos:[...b.photos,{date:new Date().toISOString().slice(0,10),data:thumb}]}});
+setAddPhoto(false)};img.src=re.target.result};reader.readAsDataURL(file)}
+var stats=[{l:"Vikt",k:"weight",u:"kg",c:C.cy},{l:"Midja",k:"waist",u:"cm",c:C.or},{l:"Armar",k:"arms",u:"cm",c:C.pu},{l:"Bröst",k:"chest",u:"cm",c:C.gr}];
+return <div>
+<h1 style={{fontSize:24,fontWeight:700,marginBottom:16}}>💪 Kropp & Mått</h1>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
+{stats.map(function(s){var val=latest&&latest[s.k]?latest[s.k]:null;var d=diff(s.k);
+return <GC key={s.k} sx={{textAlign:"center",padding:"14px 10px"}}>
+<p style={{fontSize:9,color:C.s}}>{s.l}</p>
+<p style={{fontSize:24,fontWeight:800,marginTop:4,color:val?s.c:C.s}}>{val||"—"} <span style={{fontSize:11,color:C.s}}>{val?s.u:""}</span></p>
+{d&&<span style={{fontSize:10,fontWeight:600,color:d.startsWith("+")?s.k==="waist"?C.rd:C.gr:s.k==="waist"?C.gr:C.rd}}>{d} {s.u}</span>}
+</GC>})}
+</div>
+
+{!adding?<button onClick={function(){setAdding(true)}} style={{width:"100%",padding:12,borderRadius:12,border:"1px dashed "+C.cy,background:"rgba(0,212,255,0.05)",color:C.cy,fontSize:13,fontWeight:700,marginBottom:14}}>📏 Logga mått</button>:
+<GC><p style={{fontSize:14,fontWeight:700,marginBottom:10}}>Logga mått</p>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
+{stats.map(function(s){return <div key={s.k}><label style={{fontSize:9,color:C.s}}>{s.l} ({s.u})</label>
+<input type="number" inputMode="decimal" value={form[s.k]} onChange={function(ev){setForm(function(f){var n={...f};n[s.k]=ev.target.value;return n})}} placeholder={latest&&latest[s.k]?String(latest[s.k]):"—"} style={{width:"100%",padding:"8px 10px",borderRadius:8,background:"rgba(255,255,255,0.06)",border:"1px solid "+C.b,color:"#fff",fontSize:15,fontWeight:700,textAlign:"center",outline:"none",marginTop:4}}/></div>})}
+</div>
+<div style={{display:"flex",gap:8}}>
+<button onClick={function(){setAdding(false)}} style={{flex:1,padding:10,borderRadius:10,background:"rgba(255,255,255,0.04)",border:"1px solid "+C.b,color:C.s,fontSize:12,fontWeight:600}}>Avbryt</button>
+<button onClick={saveEntry} style={{flex:2,padding:10,borderRadius:10,background:C.cy,border:"none",color:"#fff",fontSize:13,fontWeight:700}}>✓ Spara</button>
+</div></GC>}
+
+<p style={{fontSize:12,fontWeight:700,color:C.s,marginBottom:8,marginTop:6}}>HISTORIK</p>
+{entries.length===0&&<GC sx={{textAlign:"center",padding:"20px"}}><p style={{fontSize:12,color:C.s}}>Inga mått loggade än</p></GC>}
+{entries.slice().reverse().slice(0,10).map(function(e,i){return <GC key={i} sx={{padding:"10px 14px"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+<span style={{fontSize:11,color:C.m}}>{e.date}</span>
+<div style={{display:"flex",gap:10}}>
+{e.weight&&<span style={{fontSize:12,fontWeight:700,color:C.cy}}>{e.weight}kg</span>}
+{e.waist&&<span style={{fontSize:12,fontWeight:700,color:C.or}}>{e.waist}cm</span>}
+{e.arms&&<span style={{fontSize:12,fontWeight:700,color:C.pu}}>{e.arms}cm</span>}
+{e.chest&&<span style={{fontSize:12,fontWeight:700,color:C.gr}}>{e.chest}cm</span>}
+</div></div></GC>})}
+
+<p style={{fontSize:12,fontWeight:700,color:C.s,marginBottom:8,marginTop:14}}>PROGRESS-FOTON</p>
+<input type="file" accept="image/*" capture="environment" ref={fileRef} style={{display:"none"}} onChange={handlePhoto}/>
+<button onClick={function(){fileRef.current&&fileRef.current.click()}} style={{width:"100%",padding:12,borderRadius:12,border:"1px dashed "+C.pu,background:"rgba(139,92,246,0.05)",color:C.pu,fontSize:13,fontWeight:700,marginBottom:10}}>📷 Ta foto</button>
+{photos.length>0&&<div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:6}}>
+{photos.slice().reverse().map(function(p,i){return <div key={i} style={{position:"relative",borderRadius:10,overflow:"hidden",border:"1px solid "+C.b,aspectRatio:"3/4"}}>
+<img src={p.data} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+<div style={{position:"absolute",bottom:0,left:0,right:0,padding:"4px 6px",background:"rgba(0,0,0,0.7)",fontSize:9,color:C.m}}>{p.date}</div>
+</div>})}
+</div>}
+{photos.length===0&&<GC sx={{textAlign:"center",padding:"16px"}}><p style={{fontSize:12,color:C.s}}>Inga foton än — ta ett varje söndag</p></GC>}
+</div>}
+function ProfileTab(p){return <div>
+<h1 style={{fontSize:24,fontWeight:700,marginBottom:20}}>⚙️ Profil</h1>
+<GC><p style={{fontSize:12,fontWeight:600,color:C.s,marginBottom:10}}>CYKEL-VECKA</p>
+<div style={{display:"flex",gap:6}}>{[1,2,3,4].map(function(w){var wph=PHASE_MAP[w],wc=PH[wph].c;return <button key={w} onClick={function(){p.setWk(w)}} style={{flex:1,padding:"12px 0",borderRadius:12,fontSize:13,fontWeight:700,border:"1px solid "+(p.wk===w?wc+"66":C.b),background:p.wk===w?wc+"15":"transparent",color:p.wk===w?wc:C.s}}>{wph}<br/><span style={{fontSize:9}}>V{w}</span></button>})}</div>
+{(function(){var cs=LS("cycle_start",null);if(!cs)return null;var diff=Math.floor((new Date()-new Date(cs+"T12:00"))/86400000);
+return <p style={{fontSize:10,color:C.s,marginTop:8,textAlign:"center"}}>Startad {cs} — dag {diff+1}</p>})()}
+</GC>
+{(function(){var hist=LS("cycle_history",[]);if(hist.length===0)return null;
+return <GC><p style={{fontSize:12,fontWeight:600,color:C.s,marginBottom:8}}>CYKEL-HISTORIK</p>
+{hist.slice().reverse().slice(0,8).map(function(h,i){var phInfo=PH[h.phase];
+return <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:i<7?"1px solid rgba(255,255,255,0.04)":"none"}}>
+<div style={{display:"flex",alignItems:"center",gap:8}}>
+<span style={{fontSize:12,fontWeight:800,color:phInfo?phInfo.c:C.s,width:28}}>{h.phase}</span>
+<span style={{fontSize:12,color:C.m}}>{phInfo?phInfo.l:""}</span></div>
+<span style={{fontSize:10,color:C.s}}>{h.date}</span></div>})}
+</GC>})()}
+<GC><p style={{fontSize:12,fontWeight:600,color:C.s,marginBottom:8}}>PROFIL</p>
+<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Vikt</span><span style={{fontSize:13,fontWeight:700}}>72 kg</span></div>
+<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Protein-mål</span><span style={{fontSize:13,fontWeight:700}}>160g/dag</span></div>
+<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Kalorier</span><span style={{fontSize:13,fontWeight:700}}>2200-2400 kcal</span></div>
+<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0"}}><span style={{fontSize:13}}>MMA</span><span style={{fontSize:13,fontWeight:700}}>~6h/vecka</span></div>
+</GC>
+<GC><p style={{fontSize:12,fontWeight:600,color:C.s,marginBottom:8}}>APP</p>
+<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0"}}><span style={{fontSize:13}}>Version</span><span style={{fontSize:13,fontWeight:700,color:C.gr}}>V1.0 🚀</span></div></GC>
+</div>}
+function App(){var ts=h("today"),tab=ts[0],setTab=ts[1];
+var ws=h(function(){return LS("week",1)}),wk=ws[0],setWkR=ws[1];
+function setWk(w){setWkR(w);SS("week",w);SS("cycle_start",dk());
+var hist=LS("cycle_history",[]);hist.push({week:w,phase:PHASE_MAP[w],date:dk()});if(hist.length>20)hist=hist.slice(-20);SS("cycle_history",hist)}
+var dow=new Date().getDay();var phase=PHASE_MAP[wk];
+var tabs=[{id:"today",i:"🏠",l:"Idag"},{id:"program",i:"📋",l:"Program"},{id:"history",i:"📊",l:"Historik"},{id:"body",i:"💪",l:"Kropp"},{id:"profile",i:"⚙️",l:"Profil"}];
+return <div style={{maxWidth:430,margin:"0 auto",minHeight:"100vh",background:"linear-gradient(165deg,#060a1f 0%,#0a1029 30%,#0d1535 60%,#091228 100%)"}}><div style={{padding:"max(20px, env(safe-area-inset-top)) 16px 110px",animation:"fadeIn .3s ease-out"}}>
+{tab==="today"&&<TodayTab dow={dow} wk={wk} setWk={setWk} phase={phase}/>}
+{tab==="program"&&<ProgramTab dow={dow} wk={wk} phase={phase}/>}
+{tab==="history"&&<HistoryTab/>}
+{tab==="body"&&<BodyTab/>}
+{tab==="profile"&&<ProfileTab wk={wk} setWk={setWk}/>}
+</div><div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(6,10,31,0.97)",backdropFilter:"blur(30px)",WebkitBackdropFilter:"blur(30px)",borderTop:"1px solid rgba(255,255,255,0.06)",display:"flex",justifyContent:"space-around",padding:"8px 0 max(12px, env(safe-area-inset-bottom))",zIndex:10}}>{tabs.map(function(t){var active=tab===t.id;return <button key={t.id} onClick={function(){setTab(t.id);window.scrollTo({top:0,behavior:"smooth"})}} style={{background:"none",border:"none",color:active?C.cy:C.s,display:"flex",flexDirection:"column",alignItems:"center",gap:2,fontSize:9,fontWeight:active?700:500,padding:"6px 12px",minHeight:44,justifyContent:"center",position:"relative",transition:"color .15s"}}><span style={{fontSize:20}}>{t.i}</span>{t.l}{active&&<div style={{position:"absolute",top:0,left:"50%",transform:"translateX(-50%)",width:20,height:2,borderRadius:1,background:C.cy}}/>}</button>})}</div></div>}
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 </body>
