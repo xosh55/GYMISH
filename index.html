@@ -110,7 +110,8 @@ carry:{m:"Grip, core, traps, stabiliserare",t:"Axlar bakåt-ner. Raka armar. Kor
 super:{m:"Flera muskelgrupper",t:"Ingen vila mellan övningar i supersetet. Vila efter sista."},
 other:{m:"Varierat",t:"Fokus på mind-muscle connection. Kontroll framför vikt."}};
 function getExCat(name){var n=name.toLowerCase();
-if(/bänk|bench|flat.*(press|hantel)|incline.*(press|hantel|bänk)/i.test(n)&&!/close/i.test(n))return"bench";
+if(/bänk|bench|flat.*(press|hantel)|incline.*(press|hantel|bänk)|^push.?ups/i.test(n)&&!/close/i.test(n)&&!/diamond/i.test(n))return"bench";
+if(/diamond.*push/i.test(n))return"tricep";
 if(/ohp|overhead|arnold|seated.*db.*press|standing.*press|db press/i.test(n)&&!/leg/i.test(n))return"ohp";
 if(/dip/i.test(n))return"dip";
 if(/fl[yö]e|pec.*deck/i.test(n))return"flye";
@@ -322,6 +323,7 @@ var es=h(null),editSet=es[0],setEditSet=es[1];
 var rts=h(null),restTimer=rts[0],setRestTimer=rts[1];
 var ies=h(null),infoEx=ies[0],setInfoEx=ies[1];
 var iws=h(null),infoWu=iws[0],setInfoWu=iws[1];
+var ils=h(null),infoLu=ils[0],setInfoLu=ils[1];
 function setData(fn){setDataRaw(function(prev){var next=typeof fn==="function"?fn(prev):{...prev,...fn};SS(key,next);return next})}
 var cardioDone=data.cardio!==null;
 var warmupDone=WARMUP.every(function(w){return data.warmup[w.id]});
@@ -371,9 +373,16 @@ return <div style={{background:"linear-gradient(135deg,rgba(255,107,0,0.12),rgba
 <p style={{fontSize:11,color:C.m,marginBottom:12}}>Underarmar + pump för ådror & fullness • ~10 min</p>
 {(function(){var items=today.lunch.split(" + ");var lunchChecks=data.lunchItems||{};var allLD=items.every(function(_,i){return lunchChecks[i]});
 return <div>
-{items.map(function(item,i){var done=lunchChecks[i];return <GC key={i} onClick={function(){setData(function(d){var lc={...(d.lunchItems||{})};lc[i]=!lc[i];var allD=items.every(function(_,j){return lc[j]});return{...d,lunchItems:lc,lunchDone:allD}})}} bc={done?"rgba(0,255,136,0.2)":C.b} sx={{display:"flex",alignItems:"center",gap:12,cursor:"pointer",opacity:done?0.6:1}}>
+{items.map(function(item,i){var done=lunchChecks[i];var exName=item.trim().split(" ")[0]+" "+item.trim().split(" ")[1];var cat=getExCat(item.trim());var showInfo=infoLu===i;
+return <GC key={i} bc={done?"rgba(0,255,136,0.2)":C.b} sx={{opacity:done?0.6:1}}>
+<div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={function(){setData(function(d){var lc={...(d.lunchItems||{})};lc[i]=!lc[i];var allD=items.every(function(_,j){return lc[j]});return{...d,lunchItems:lc,lunchDone:allD}})}}>
 <div style={{width:28,height:28,borderRadius:8,background:done?C.gr:"rgba(255,255,255,0.06)",border:"1px solid "+(done?"transparent":C.b),display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:done?"#060a1f":C.s,flexShrink:0}}>{done?"✓":"○"}</div>
-<span style={{fontSize:13,fontWeight:500,textDecoration:done?"line-through":"none"}}>{item.trim()}</span></GC>})}
+<span style={{fontSize:13,fontWeight:500,textDecoration:done?"line-through":"none",flex:1}}>{item.trim()}</span>
+<button onClick={function(ev){ev.stopPropagation();setInfoLu(showInfo?null:i)}} style={{width:32,height:32,borderRadius:8,background:showInfo?"rgba(139,92,246,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showInfo?"rgba(139,92,246,0.2)":C.b),display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,padding:0}}>
+<ExSvg cat={cat} size={22} color={showInfo?C.pu:C.s}/></button>
+</div>
+{showInfo&&<ExInfoPanel name={item.trim()} phaseColor={C.pu}/>}
+</GC>})}
 {allLD&&<div style={{textAlign:"center",padding:10}}><p style={{fontSize:14,fontWeight:700,color:C.gr}}>✅ Lunch-pass klart!</p>
 <button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{marginTop:8,padding:"10px 24px",borderRadius:12,background:C.pu,border:"none",color:"#fff",fontSize:13,fontWeight:700}}>← Tillbaka</button></div>}
 <TimerWidget color={C.pu} onDone={function(t){setData(function(d){return{...d,lunchDone:true,section:"idle"}})}}/>
