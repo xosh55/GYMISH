@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="sv">
 <head>
 <meta charset="UTF-8"/>
@@ -240,7 +241,8 @@ else{els=[Ci(32,16,5),L(32,21,32,42),L(32,42,24,56),L(32,42,40,56),L(32,26,20,34
 return <svg width={s} height={s} viewBox={vb} style={{flexShrink:0}}>{els}</svg>}
 
 function ExInfoPanel(p){var cat=getExCat(p.name);var info=EX_CATS[cat]||EX_CATS.other;
-return <div style={{background:"rgba(0,212,255,0.04)",border:"1px solid rgba(0,212,255,0.12)",borderRadius:12,padding:"12px",marginTop:8}}>
+return <div style={{background:“rgba(0,212,255,0.04)”,border:“1px solid rgba(0,212,255,0.12)”,borderRadius:12,padding:“12px”,marginTop:8}}>
+
 <div style={{display:"flex",gap:12,alignItems:"center",marginBottom:8}}>
 <div style={{background:"rgba(0,0,0,0.3)",borderRadius:10,padding:6}}><ExSvg cat={cat} size={56} color={p.phaseColor||C.cy}/></div>
 <div><p style={{fontSize:13,fontWeight:700}}>{p.name}</p><p style={{fontSize:10,color:C.gr,marginTop:2}}>{info.m}</p></div></div>
@@ -297,9 +299,10 @@ return <div style={{background:"rgba(0,212,255,0.08)",border:"1px solid rgba(0,2
 <button onClick={function(){if(ref.current)clearInterval(ref.current);if(p.onDone)p.onDone()}} style={{padding:"8px 20px",borderRadius:10,background:t===0?"rgba(0,255,136,0.15)":"rgba(255,255,255,0.06)",border:"1px solid "+(t===0?"rgba(0,255,136,0.3)":C.b),color:t===0?C.gr:"#fff",fontSize:12,fontWeight:600}}>{t===0?"✓ Nästa set":"Skippa →"}</button>
 </div></div>}
 
-function SetInput(p){var ks=h(p.lastKg!==undefined?String(p.lastKg):""),kg=ks[0],setKg=ks[1];var rps=h(String(p.targetReps)),reps=rps[0],setReps=rps[1];
+function SetInput(p){var ks=h(p.lastKg!==undefined?String(p.lastKg):””),kg=ks[0],setKg=ks[1];var rps=h(String(p.targetReps)),reps=rps[0],setReps=rps[1];
 var quickKg=[5,10,15,20,25,30,40,50,60,80];
-return <div style={{background:"rgba(0,212,255,0.06)",border:"1px solid rgba(0,212,255,0.2)",borderRadius:14,padding:"14px",marginTop:8}}>
+return <div style={{background:“rgba(0,212,255,0.06)”,border:“1px solid rgba(0,212,255,0.2)”,borderRadius:14,padding:“14px”,marginTop:8}}>
+
 <p style={{fontSize:11,fontWeight:700,color:C.cy,marginBottom:10}}>Set {p.setNum} — Logga</p>
 <div style={{display:"flex",gap:8,marginBottom:10}}>
 <div style={{flex:1}}><label style={{fontSize:9,color:C.s,display:"block",marginBottom:4}}>KG</label>
@@ -316,28 +319,30 @@ return <div style={{background:"rgba(0,212,255,0.06)",border:"1px solid rgba(0,2
 function TodayTab(p){
 var dow=p.dow,phase=p.phase,ph=PH[phase],today=DAYS[dow];
 var rawExs=PRG[dow][phase]||[];var exs=rawExs.map(parseEx);
-var key="day_"+dk()+"_"+dow;
-var ds=h(LS(key,{section:"idle",cardio:null,warmup:{},gym:{},cooldown:{},lunchDone:false,phase:phase})),data=ds[0],setDataRaw=ds[1];
-ue(function(){if(!data.phase||data.phase!==phase){setData(function(d){return{...d,phase:phase}})}},[phase]);
+var key=“day_”+dk()+”*”+dow;
+var ds=h(LS(key,{section:“idle”,cardio:null,warmup:{},gym:{},cooldown:{},lunchDone:false,phase:phase})),data=ds[0],setDataRaw=ds[1];
+ue(function(){if(!data.phase||data.phase!==phase){setData(function(d){return{…d,phase:phase}})}},[phase]);
 var es=h(null),editSet=es[0],setEditSet=es[1];
 var rts=h(null),restTimer=rts[0],setRestTimer=rts[1];
 var ies=h(null),infoEx=ies[0],setInfoEx=ies[1];
 var iws=h(null),infoWu=iws[0],setInfoWu=iws[1];
 var ils=h(null),infoLu=ils[0],setInfoLu=ils[1];
-function setData(fn){setDataRaw(function(prev){var next=typeof fn==="function"?fn(prev):{...prev,...fn};SS(key,next);return next})}
+var els=h(null),editLuSet=els[0],setEditLuSet=els[1];
+function setData(fn){setDataRaw(function(prev){var next=typeof fn===“function”?fn(prev):{…prev,…fn};SS(key,next);return next})}
 var cardioDone=data.cardio!==null;
 var warmupDone=WARMUP.every(function(w){return data.warmup[w.id]});
 var totalSets=exs.reduce(function(a,e){return a+e.sets},0);
-var doneSets=0;exs.forEach(function(e,ei){for(var si=0;si<e.sets;si++){var d=data.gym[ei+"_"+si];
-if(e.type==="superset"?d&&d.a&&d.b:e.type==="giant"?d&&d.subs&&d.subs.length===(e.subs||[]).length:!!d)doneSets++}});
+var doneSets=0;exs.forEach(function(e,ei){for(var si=0;si<e.sets;si++){var d=data.gym[ei+”*”+si];
+if(e.type===“superset”?d&&d.a&&d.b:e.type===“giant”?d&&d.subs&&d.subs.length===(e.subs||[]).length:!!d)doneSets++}});
 var gymDone=doneSets===totalSets&&totalSets>0;
 var lunchDone=data.lunchDone;
 var allDone=cardioDone&&warmupDone&&gymDone;
 var now=new Date(),hrs=now.getHours();
-var greeting=hrs<5?"God natt":hrs<10?"God morgon":hrs<17?"God eftermiddag":"God kväll";
-var dateStr=DN[dow]+" "+now.getDate()+"/"+(now.getMonth()+1);
+var greeting=hrs<5?“God natt”:hrs<10?“God morgon”:hrs<17?“God eftermiddag”:“God kväll”;
+var dateStr=DN[dow]+” “+now.getDate()+”/”+(now.getMonth()+1);
 var sec=data.section;
 return <div>
+
 <div style={{marginBottom:20}}><p style={{fontSize:13,color:C.s,letterSpacing:1}}>{dateStr.toUpperCase()}</p><h1 style={{fontSize:26,fontWeight:700,marginTop:4}}>{greeting} KM 👋</h1></div>
 <GC gl={ph.c} bc={ph.c+"33"} sx={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,padding:"12px 16px"}}>
 <div><div style={{display:"flex",gap:8,alignItems:"center"}}><span style={{fontSize:11,fontWeight:700,color:ph.c,letterSpacing:2}}>VECKA {p.wk} / 4</span><span style={{fontSize:10,background:ph.c+"22",color:ph.c,padding:"2px 8px",borderRadius:20}}>{phase}</span></div><p style={{fontSize:15,fontWeight:700,marginTop:2}}>{ph.l}</p></div>
@@ -368,24 +373,43 @@ return <div style={{background:"linear-gradient(135deg,rgba(255,107,0,0.12),rgba
 </GC>
 </div>}
 {sec==="lunch"&&<div style={{animation:"slideUp .2s ease-out"}}>
-<button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{background:"none",border:"none",color:C.cy,fontSize:13,fontWeight:600,marginBottom:16}}>← Tillbaka</button>
+<button onClick={function(){setData(function(d){return{...d,section:"idle"}});setEditLuSet(null)}} style={{background:"none",border:"none",color:C.cy,fontSize:13,fontWeight:600,marginBottom:16}}>← Tillbaka</button>
 <h2 style={{fontSize:20,fontWeight:700,marginBottom:4}}>🔄 Lunch-pass</h2>
 <p style={{fontSize:11,color:C.m,marginBottom:12}}>Underarmar + pump för ådror & fullness • ~10 min</p>
-{(function(){var items=today.lunch.split(" + ");var lunchChecks=data.lunchItems||{};var allLD=items.every(function(_,i){return lunchChecks[i]});
+{(function(){var items=today.lunch.split(" + ").map(function(raw){
+var t=raw.trim();var m=t.match(/^(.+?)\s+(\d+)[x×](\d+\w*)$/);
+if(m)return{name:m[1],sets:parseInt(m[2]),reps:m[3],raw:t};
+return{name:t,sets:1,reps:"1",raw:t}});
+var lGym=data.lunchGym||{};
+var totalS=items.reduce(function(a,e){return a+e.sets},0);
+var doneS=0;items.forEach(function(e,ei){for(var si=0;si<e.sets;si++){if(lGym[ei+"_"+si])doneS++}});
+var allLD=doneS===totalS&&totalS>0;
+ue(function(){if(allLD&&!data.lunchDone)setData(function(d){return{...d,lunchDone:true}})},[allLD]);
 return <div>
-{items.map(function(item,i){var done=lunchChecks[i];var exName=item.trim().split(" ")[0]+" "+item.trim().split(" ")[1];var cat=getExCat(item.trim());var showInfo=infoLu===i;
-return <GC key={i} bc={done?"rgba(0,255,136,0.2)":C.b} sx={{opacity:done?0.6:1}}>
-<div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={function(){setData(function(d){var lc={...(d.lunchItems||{})};lc[i]=!lc[i];var allD=items.every(function(_,j){return lc[j]});return{...d,lunchItems:lc,lunchDone:allD}})}}>
-<div style={{width:28,height:28,borderRadius:8,background:done?C.gr:"rgba(255,255,255,0.06)",border:"1px solid "+(done?"transparent":C.b),display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,color:done?"#060a1f":C.s,flexShrink:0}}>{done?"✓":"○"}</div>
-<span style={{fontSize:13,fontWeight:500,textDecoration:done?"line-through":"none",flex:1}}>{item.trim()}</span>
-<button onClick={function(ev){ev.stopPropagation();setInfoLu(showInfo?null:i)}} style={{width:32,height:32,borderRadius:8,background:showInfo?"rgba(139,92,246,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(showInfo?"rgba(139,92,246,0.2)":C.b),display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,padding:0}}>
-<ExSvg cat={cat} size={22} color={showInfo?C.pu:C.s}/></button>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+<Ring sz={44} pr={totalS>0?Math.round(doneS/totalS*100):0} co={allLD?C.gr:C.pu}><span style={{fontSize:10,fontWeight:800}}>{doneS}/{totalS}</span></Ring>
+<span style={{fontSize:11,color:C.s}}>{items.length} övningar</span></div>
+{items.map(function(e,ei){var cat=getExCat(e.name);var showInfo=infoLu===ei;
+var setsDone=0;for(var sc=0;sc<e.sets;sc++){if(lGym[ei+"_"+sc])setsDone++}
+var exDone=setsDone===e.sets;
+return <GC key={ei} bc={exDone?"rgba(0,255,136,0.15)":C.b} sx={{opacity:exDone?0.7:1}}>
+<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+<div style={{width:36,height:36,borderRadius:10,background:exDone?"rgba(0,255,136,0.12)":"rgba(139,92,246,0.1)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+<ExSvg cat={cat} size={26} color={exDone?C.gr:C.pu}/></div>
+<div style={{flex:1}}><p style={{fontSize:13,fontWeight:600,color:exDone?C.gr:"#fff"}}>{e.name}</p>
+<p style={{fontSize:10,color:C.s}}>{e.sets}×{e.reps} • {setsDone}/{e.sets} set</p></div>
+<button onClick={function(ev){ev.stopPropagation();setInfoLu(showInfo?null:ei)}} style={{width:28,height:28,borderRadius:7,background:showInfo?"rgba(139,92,246,0.15)":"transparent",border:"1px solid "+(showInfo?C.pu+"44":C.b),display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,padding:0,fontSize:12,color:C.s}}>?</button>
 </div>
-{showInfo&&<ExInfoPanel name={item.trim()} phaseColor={C.pu}/>}
-</GC>})}
+{showInfo&&<ExInfoPanel name={e.name} phaseColor={C.pu}/>}
+<div style={{display:"flex",gap:4,flexWrap:"wrap"}}>
+{Array.from({length:e.sets},function(_,si){
+var sd=lGym[ei+"_"+si];var isEdit=editLuSet&&editLuSet.ei===ei&&editLuSet.si===si;
+if(isEdit)return <div key={si} style={{width:"100%"}}><SetInput setNum={si+1} targetReps={parseInt(e.reps)||15} lastKg={sd?sd.kg:(function(){for(var p=si-1;p>=0;p--){var ps=lGym[ei+"_"+p];if(ps)return ps.kg}return undefined})()} onSave={function(kg,reps){setData(function(d){var lg={...(d.lunchGym||{})};lg[ei+"_"+si]={kg:kg,reps:reps};return{...d,lunchGym:lg}});setEditLuSet(null)}} onCancel={function(){setEditLuSet(null)}}/></div>;
+if(sd)return <button key={si} onClick={function(){setEditLuSet({ei:ei,si:si})}} style={{padding:"6px 10px",borderRadius:8,background:"rgba(0,255,136,0.08)",border:"1px solid rgba(0,255,136,0.15)",color:C.gr,fontSize:11,fontWeight:700,minWidth:56}}>{sd.kg>0?sd.kg+"kg×"+sd.reps:sd.reps+" reps"}</button>;
+return <button key={si} onClick={function(){setEditLuSet({ei:ei,si:si})}} style={{padding:"6px 10px",borderRadius:8,background:"rgba(139,92,246,0.08)",border:"1px solid rgba(139,92,246,0.2)",color:C.pu,fontSize:11,fontWeight:600,minWidth:56}}>Set {si+1}</button>})}
+</div></GC>})}
 {allLD&&<div style={{textAlign:"center",padding:10}}><p style={{fontSize:14,fontWeight:700,color:C.gr}}>✅ Lunch-pass klart!</p>
 <button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{marginTop:8,padding:"10px 24px",borderRadius:12,background:C.pu,border:"none",color:"#fff",fontSize:13,fontWeight:700}}>← Tillbaka</button></div>}
-<TimerWidget color={C.pu} onDone={function(t){setData(function(d){return{...d,lunchDone:true,section:"idle"}})}}/>
 </div>})()}
 </div>}
 {sec==="warmup"&&<div style={{animation:"slideUp .2s ease-out"}}>
@@ -437,11 +461,12 @@ return <GC key={ei} bc={eDone===e.sets&&eDone>0?"rgba(0,255,136,0.15)":tb?tb.c+"
 <Ring sz={36} pr={e.sets>0?Math.round(eDone/e.sets*100):0} co={eDone===e.sets?C.gr:tb?tb.c:C.cy}><span style={{fontSize:8,fontWeight:700}}>{eDone}/{e.sets}</span></Ring></div>
 {showInfo&&<ExInfoPanel name={e.name} phaseColor={ph.c}/>}
 
-{e.type==="pyramid"&&<div style={{display:"flex",alignItems:"center",gap:4,margin:"8px 0 4px",padding:"6px 10px",background:"rgba(0,212,255,0.04)",borderRadius:8}}>
-{Array.from({length:e.sets}).map(function(_,si){var mid=Math.floor(e.sets/2);var dir=si<mid?"↑":si===mid?"★":"↓";var pct=si<mid?70+Math.round(si*30/mid):si===mid?100:100-Math.round((si-mid)*30/(e.sets-mid-1));
-return <div key={si} style={{flex:1,textAlign:"center"}}><div style={{fontSize:14}}>{dir}</div><div style={{fontSize:8,color:C.cy}}>{pct}%</div></div>})}</div>}
+{e.type===“pyramid”&&<div style={{display:“flex”,alignItems:“center”,gap:4,margin:“8px 0 4px”,padding:“6px 10px”,background:“rgba(0,212,255,0.04)”,borderRadius:8}}>
+{Array.from({length:e.sets}).map(function(_,si){var mid=Math.floor(e.sets/2);var dir=si<mid?“↑”:si===mid?“★”:“↓”;var pct=si<mid?70+Math.round(si*30/mid):si===mid?100:100-Math.round((si-mid)*30/(e.sets-mid-1));
+return <div key={si} style={{flex:1,textAlign:“center”}}><div style={{fontSize:14}}>{dir}</div><div style={{fontSize:8,color:C.cy}}>{pct}%</div></div>})}</div>}
 
-{(e.type==="normal"||e.type==="dropset"||e.type==="pyramid"||e.type==="21s")&&<div>
+{(e.type===“normal”||e.type===“dropset”||e.type===“pyramid”||e.type===“21s”)&&<div>
+
 <div style={{marginTop:10,display:"flex",flexWrap:"wrap",gap:6}}>
 {Array.from({length:e.sets}).map(function(_,si){var logged=data.gym[ei+"_"+si];var isEditing=editSet&&editSet.ei===ei&&editSet.si===si&&!editSet.isDrop;
 var dropCount=logged&&logged.drops?logged.drops.length:0;
@@ -455,24 +480,26 @@ return <div key={si} style={{display:"inline-flex",alignItems:"center",gap:2}}>
 onCancel={function(){setEditSet(null)}}
 onSave={function(kg,reps){setData(function(d){var g={...d.gym};var prev=g[ei+"_"+editSet.si];g[ei+"_"+editSet.si]={kg:kg,reps:reps,drops:prev&&prev.drops?prev.drops:[]};return{...d,gym:g}});setEditSet(null);setRestTimer(ph.rest)}}/>}
 
-{e.type==="dropset"&&(function(){var lastSi=null;for(var si3=e.sets-1;si3>=0;si3--){if(data.gym[ei+"_"+si3]){lastSi=si3;break}}
+{e.type===“dropset”&&(function(){var lastSi=null;for(var si3=e.sets-1;si3>=0;si3–){if(data.gym[ei+”*”+si3]){lastSi=si3;break}}
 if(lastSi===null)return null;
-var logged=data.gym[ei+"_"+lastSi];var drops=logged.drops||[];
+var logged=data.gym[ei+”*”+lastSi];var drops=logged.drops||[];
 var isAddingDrop=editSet&&editSet.ei===ei&&editSet.si===lastSi&&editSet.isDrop;
-return <div style={{marginTop:6,paddingLeft:12,borderLeft:"2px solid "+C.or}}>
-{drops.map(function(dr,di){return <div key={di} style={{fontSize:11,color:C.or,padding:"2px 0"}}>Drop {di+1}: {dr.kg}kg × {dr.reps}</div>})}
-{!isAddingDrop&&<button onClick={function(){setEditSet({ei:ei,si:lastSi,isDrop:true})}} style={{fontSize:10,color:C.or,background:"rgba(255,107,0,0.08)",border:"1px solid rgba(255,107,0,0.15)",borderRadius:8,padding:"4px 10px",marginTop:4,fontWeight:600}}>➕ Dropset</button>}
-{isAddingDrop&&<SetInput setNum={"Drop "+(drops.length+1)} targetReps={e.reps} lastKg={logged.kg?Math.round(logged.kg*0.7):undefined}
+return <div style={{marginTop:6,paddingLeft:12,borderLeft:“2px solid “+C.or}}>
+{drops.map(function(dr,di){return <div key={di} style={{fontSize:11,color:C.or,padding:“2px 0”}}>Drop {di+1}: {dr.kg}kg × {dr.reps}</div>})}
+{!isAddingDrop&&<button onClick={function(){setEditSet({ei:ei,si:lastSi,isDrop:true})}} style={{fontSize:10,color:C.or,background:“rgba(255,107,0,0.08)”,border:“1px solid rgba(255,107,0,0.15)”,borderRadius:8,padding:“4px 10px”,marginTop:4,fontWeight:600}}>➕ Dropset</button>}
+{isAddingDrop&&<SetInput setNum={“Drop “+(drops.length+1)} targetReps={e.reps} lastKg={logged.kg?Math.round(logged.kg*0.7):undefined}
 onCancel={function(){setEditSet(null)}}
-onSave={function(kg,reps){setData(function(d){var g={...d.gym};var entry={...g[ei+"_"+lastSi]};if(!entry.drops)entry.drops=[];entry.drops=[...entry.drops,{kg:kg,reps:reps}];g[ei+"_"+lastSi]=entry;return{...d,gym:g}});setEditSet(null)}}/>}
+onSave={function(kg,reps){setData(function(d){var g={…d.gym};var entry={…g[ei+”*”+lastSi]};if(!entry.drops)entry.drops=[];entry.drops=[…entry.drops,{kg:kg,reps:reps}];g[ei+”*”+lastSi]=entry;return{…d,gym:g}});setEditSet(null)}}/>}
+
 </div>})()}
 </div>}
 
-{e.type==="superset"&&e.subs&&<div style={{marginTop:10}}>
-{Array.from({length:e.sets}).map(function(_,si){var logged=data.gym[ei+"_"+si]||{};var aD=logged.a,bD=logged.b,setDone=aD&&bD;
-var isEditA=editSet&&editSet.ei===ei&&editSet.si===si&&editSet.sub==="a";
-var isEditB=editSet&&editSet.ei===ei&&editSet.si===si&&editSet.sub==="b";
-return <div key={si} style={{marginBottom:8,padding:"8px 10px",borderRadius:10,background:setDone?"rgba(139,92,246,0.08)":"rgba(255,255,255,0.02)",border:"1px solid "+(setDone?"rgba(139,92,246,0.15)":"rgba(255,255,255,0.04)")}}>
+{e.type===“superset”&&e.subs&&<div style={{marginTop:10}}>
+{Array.from({length:e.sets}).map(function(*,si){var logged=data.gym[ei+”*”+si]||{};var aD=logged.a,bD=logged.b,setDone=aD&&bD;
+var isEditA=editSet&&editSet.ei===ei&&editSet.si===si&&editSet.sub===“a”;
+var isEditB=editSet&&editSet.ei===ei&&editSet.si===si&&editSet.sub===“b”;
+return <div key={si} style={{marginBottom:8,padding:“8px 10px”,borderRadius:10,background:setDone?“rgba(139,92,246,0.08)”:“rgba(255,255,255,0.02)”,border:“1px solid “+(setDone?“rgba(139,92,246,0.15)”:“rgba(255,255,255,0.04)”)}}>
+
 <div style={{fontSize:9,color:C.pu,fontWeight:700,marginBottom:6}}>SET {si+1}{setDone?" ✅":""}</div>
 <div style={{display:"flex",gap:6}}>
 <button onClick={function(){setEditSet({ei:ei,si:si,sub:"a"});setRestTimer(null)}} style={{flex:1,padding:"7px 8px",borderRadius:8,background:aD?"rgba(139,92,246,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(aD?"rgba(139,92,246,0.25)":(isEditA?C.pu+"66":C.b)),color:aD?C.pu:"#fff",fontSize:10,fontWeight:600,textAlign:"left"}}>
@@ -486,9 +513,10 @@ onCancel={function(){setEditSet(null)}} onSave={function(kg,reps){setData(functi
 </div>})}
 </div>}
 
-{e.type==="giant"&&e.subs&&<div style={{marginTop:10}}>
-{Array.from({length:e.sets}).map(function(_,si){var logged=data.gym[ei+"_"+si]||{};var loggedSubs=logged.subs||[];var setDone=loggedSubs.length===e.subs.length;
-return <div key={si} style={{marginBottom:8,padding:"8px 10px",borderRadius:10,background:setDone?"rgba(255,107,107,0.08)":"rgba(255,255,255,0.02)",border:"1px solid "+(setDone?"rgba(255,107,107,0.15)":"rgba(255,255,255,0.04)")}}>
+{e.type===“giant”&&e.subs&&<div style={{marginTop:10}}>
+{Array.from({length:e.sets}).map(function(*,si){var logged=data.gym[ei+”*”+si]||{};var loggedSubs=logged.subs||[];var setDone=loggedSubs.length===e.subs.length;
+return <div key={si} style={{marginBottom:8,padding:“8px 10px”,borderRadius:10,background:setDone?“rgba(255,107,107,0.08)”:“rgba(255,255,255,0.02)”,border:“1px solid “+(setDone?“rgba(255,107,107,0.15)”:“rgba(255,255,255,0.04)”)}}>
+
 <div style={{fontSize:9,color:C.rd,fontWeight:700,marginBottom:6}}>SET {si+1} — {loggedSubs.length}/{e.subs.length}{setDone?" ✅":""}</div>
 {e.subs.map(function(sub,subi){var subLogged=loggedSubs[subi];var isEditG=editSet&&editSet.ei===ei&&editSet.si===si&&editSet.gIdx===subi;
 return <div key={subi}>
@@ -502,22 +530,24 @@ if(subi<e.subs.length-1)setEditSet({ei:ei,si:si,gIdx:subi+1});else{setEditSet(nu
 </div>}
 
 </GC>})}
-{gymDone&&<div style={{textAlign:"center",padding:12}}><p style={{fontSize:16,fontWeight:800,color:C.gr}}>💪 Alla övningar klara!</p></div>}
+{gymDone&&<div style={{textAlign:“center”,padding:12}}><p style={{fontSize:16,fontWeight:800,color:C.gr}}>💪 Alla övningar klara!</p></div>}
+
 </div>}
 {sec==="summary"&&<div style={{animation:"slideUp .2s ease-out"}}>
 <h2 style={{fontSize:22,fontWeight:700,marginBottom:16}}>🎉 Dagens Summering</h2>
 <GC sx={{textAlign:"center",padding:"20px 16px"}}><p style={{fontSize:36,fontWeight:800,color:C.gr}}>💪</p><p style={{fontSize:18,fontWeight:700,marginTop:8}}>Bra jobbat KM!</p><p style={{fontSize:12,color:C.m,marginTop:4}}>{DN[dow]} — {phase} {ph.l}</p></GC>
-{(function(){var totalVol=0,totalReps=0,maxKg=0;
+{(function(){var totalVol=0,totalReps=0,maxKg=0,lunchSets=0;
 function addSet(s){if(s&&s.kg>0&&s.reps>0){totalVol+=s.kg*s.reps;totalReps+=s.reps;if(s.kg>maxKg)maxKg=s.kg}else if(s&&s.reps>0){totalReps+=s.reps}}
 Object.keys(data.gym).forEach(function(k){var s=data.gym[k];if(!s)return;
 if(s.a)addSet(s.a);if(s.b)addSet(s.b);
 if(s.subs)s.subs.forEach(addSet);
 if(s.kg!==undefined)addSet(s);
 if(s.drops)s.drops.forEach(addSet)});
-var calEst=Math.round((data.cardio?120:0)+doneSets*12);
+var lGym=data.lunchGym||{};Object.keys(lGym).forEach(function(k){var s=lGym[k];if(s){addSet(s);lunchSets++}});
+var calEst=Math.round((data.cardio?120:0)+(doneSets+lunchSets)*12);
 return <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
 <GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:data.cardio?C.gr:C.s}}>{data.cardio?"✓":"—"}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Kardio</p></GC>
-<GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:C.cy}}>{doneSets}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Set loggade</p></GC>
+<GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:C.cy}}>{doneSets+lunchSets}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Set loggade</p></GC>
 <GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:C.gr}}>{totalVol>0?(totalVol>=1000?Math.round(totalVol/100)/10+"t":totalVol+"kg"):"—"}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Total volym</p></GC>
 <GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:C.or}}>~{calEst}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>kcal (estimat)</p></GC>
 {maxKg>0&&<GC sx={{textAlign:"center",padding:"14px 10px",gridColumn:"1/3"}}><p style={{fontSize:22,fontWeight:800,color:C.pu}}>{maxKg} kg</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Tyngsta vikt idag</p></GC>}
@@ -562,10 +592,11 @@ allDays.forEach(function(day){var gym=day.data.gym||{};var dayVol=0;var dayExs=P
 Object.keys(gym).forEach(function(k){var s=gym[k];if(!s)return;
 function trackPr(name,kg){if(kg>0){if(!prs[name]||kg>prs[name].kg)prs[name]={kg:kg,date:day.date}}}
 function addVol(kg,reps){if(kg>0&&reps>0)dayVol+=kg*reps}
-if(s.kg!==undefined){var eidx=parseInt(k.split("_")[0]);var phase=PHASE_MAP[LS("week",1)];var exList=(PRG[day.dow]&&PRG[day.dow][phase]||[]).map(parseEx);
+if(s.kg!==undefined){var eidx=parseInt(k.split(”_”)[0]);var phase=PHASE_MAP[LS(“week”,1)];var exList=(PRG[day.dow]&&PRG[day.dow][phase]||[]).map(parseEx);
 if(exList[eidx])trackPr(exList[eidx].name,s.kg);addVol(s.kg||0,s.reps||0);if(s.drops)s.drops.forEach(function(d){addVol(d.kg||0,d.reps||0)})}
 if(s.a){addVol(s.a.kg||0,s.a.reps||0);addVol(s.b?s.b.kg:0,s.b?s.b.reps:0)}
 if(s.subs)s.subs.forEach(function(sub){if(sub)addVol(sub.kg||0,sub.reps||0)})});
+var lGym=day.data.lunchGym||{};Object.keys(lGym).forEach(function(k){var s=lGym[k];if(s){addVol(s.kg||0,s.reps||0)}});
 if(dayVol>0)volByDay.push({date:day.date,vol:dayVol,dow:day.dow})});
 
 var prList=Object.entries(prs).sort(function(a,b){return b[1].kg-a[1].kg}).slice(0,10);
@@ -574,16 +605,18 @@ var dayInfo=DAYS[day.dow];if(dayInfo){var parts=dayInfo.l.split(/[+&]/);parts.fo
 var muscleList=Object.entries(muscleCounts).sort(function(a,b){return b[1]-a[1]});
 var maxMuscle=muscleList.length>0?muscleList[0][1]:1;
 
-var ss=h("overview"),sub=ss[0],setSub=ss[1];
+var ss=h(“overview”),sub=ss[0],setSub=ss[1];
 return <div>
+
 <h1 style={{fontSize:24,fontWeight:700,marginBottom:12}}>📊 Historik</h1>
 <div style={{display:"flex",gap:4,marginBottom:14}}>
 {[{k:"overview",l:"Översikt"},{k:"week",l:"Vecka"},{k:"cycle",l:"Cykel"},{k:"prs",l:"PRs"},{k:"muscle",l:"Muskler"}].map(function(t){
 return <button key={t.k} onClick={function(){setSub(t.k)}} style={{flex:1,padding:"8px 0",borderRadius:8,border:sub===t.k?"1px solid "+C.cy:"1px solid "+C.b,background:sub===t.k?"rgba(0,212,255,0.1)":C.b,color:sub===t.k?C.cy:C.s,fontSize:11,fontWeight:600}}>{t.l}</button>})}
 </div>
 
-{sub==="overview"&&<div>
+{sub===“overview”&&<div>
 {bEntries.length>1&&<GC>
+
 <p style={{fontSize:11,fontWeight:700,color:C.cy,marginBottom:8}}>VIKT-TREND</p>
 {(function(){var wEntries=bEntries.filter(function(e){return e.weight});if(wEntries.length<2)return <p style={{fontSize:11,color:C.s}}>Logga vikt minst 2 gånger</p>;
 var vals=wEntries.map(function(e){return e.weight});var mn=Math.min.apply(null,vals)-1;var mx=Math.max.apply(null,vals)+1;var range=mx-mn||1;
@@ -601,6 +634,7 @@ return <circle key={i} cx={x} cy={y} r="3" fill={C.cy}/>})}
 </GC>}
 
 {volByDay.length>0&&<GC>
+
 <p style={{fontSize:11,fontWeight:700,color:C.gr,marginBottom:8}}>VOLYM PER PASS (kg)</p>
 {(function(){var recent=volByDay.slice(-14);var maxV=Math.max.apply(null,recent.map(function(d){return d.vol}));
 return <div style={{display:"flex",gap:2,alignItems:"flex-end",height:80}}>
@@ -611,7 +645,8 @@ return <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignIt
 </div>})()}
 </GC>}
 
-{volByDay.length===0&&bEntries.length<2&&<GC sx={{textAlign:"center",padding:"30px 16px"}}>
+{volByDay.length===0&&bEntries.length<2&&<GC sx={{textAlign:“center”,padding:“30px 16px”}}>
+
 <p style={{fontSize:14,color:C.m}}>Logga pass och mått för att se grafer</p>
 <p style={{fontSize:11,color:C.s,marginTop:4}}>Data byggs automatiskt</p></GC>}
 
@@ -620,7 +655,8 @@ return <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignIt
 <GC sx={{textAlign:"center",padding:"12px 8px"}}><p style={{fontSize:9,color:C.s}}>TOTAL VOLYM</p><p style={{fontSize:22,fontWeight:800,color:C.gr}}>{(function(){var tv=volByDay.reduce(function(a,d){return a+d.vol},0);return tv>=1000?Math.round(tv/100)/10+"t":tv+"kg"})()}</p></GC>
 </div></div>}
 
-{sub==="prs"&&<div>
+{sub===“prs”&&<div>
+
 <p style={{fontSize:11,fontWeight:700,color:C.or,marginBottom:8}}>TYNGSTA LYFT</p>
 {prList.length===0&&<GC sx={{textAlign:"center",padding:"20px"}}><p style={{fontSize:12,color:C.s}}>Logga set med KG för att se PRs</p></GC>}
 {prList.map(function(pr,i){return <GC key={i} sx={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 14px"}}>
@@ -631,7 +667,8 @@ return <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignIt
 </GC>})}
 </div>}
 
-{sub==="muscle"&&<div>
+{sub===“muscle”&&<div>
+
 <p style={{fontSize:11,fontWeight:700,color:C.pu,marginBottom:8}}>MUSKELGRUPP-FREKVENS</p>
 {muscleList.length===0&&<GC sx={{textAlign:"center",padding:"20px"}}><p style={{fontSize:12,color:C.s}}>Logga pass för att se muskeldata</p></GC>}
 {muscleList.map(function(m,i){var pct=Math.round(m[1]/maxMuscle*100);
@@ -644,7 +681,7 @@ return <GC key={i} sx={{padding:"10px 14px"}}>
 </GC>})}
 </div>}
 
-{sub==="week"&&<div>{(function(){
+{sub===“week”&&<div>{(function(){
 var now=new Date();var todayStr=now.toISOString().slice(0,10);
 var mondayOff=(now.getDay()+6)%7;var monday=new Date(now);monday.setDate(monday.getDate()-mondayOff);monday.setHours(0,0,0,0);
 function weekKey(d){var m=new Date(d);var off=(m.getDay()+6)%7;m.setDate(m.getDate()-off);return m.toISOString().slice(0,10)}
@@ -657,6 +694,7 @@ Object.keys(gym).forEach(function(k){var s=gym[k];if(!s)return;
 if(s.kg!==undefined){dv+=(s.kg||0)*(s.reps||0);hasSets=true;if(s.drops)s.drops.forEach(function(d){dv+=(d.kg||0)*(d.reps||0)})}
 if(s.a){dv+=(s.a.kg||0)*(s.a.reps||0);dv+=(s.b?(s.b.kg||0)*(s.b.reps||0):0);hasSets=true}
 if(s.subs){s.subs.forEach(function(sub){if(sub){dv+=(sub.kg||0)*(sub.reps||0);hasSets=true}})}});
+var lGym=day.data.lunchGym||{};Object.keys(lGym).forEach(function(k){var s=lGym[k];if(s&&s.kg>0&&s.reps>0){dv+=s.kg*s.reps;hasSets=true}});
 weekBuckets[wk].vol+=dv;if(hasSets)weekBuckets[wk].sessions++});
 var tw=weekBuckets[thisWeekKey]||{days:[],vol:0,sessions:0};
 var sortedWeeks=Object.keys(weekBuckets).sort().reverse();
@@ -670,6 +708,7 @@ if(todayLogged)streak++;
 var avgVol=prevWeeks.length>0?Math.round(prevWeeks.reduce(function(a,w){return a+weekBuckets[w].vol},0)/prevWeeks.length):0;
 var volDiff=avgVol>0?Math.round((tw.vol-avgVol)/avgVol*100):0;
 return <div>
+
 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
 <GC sx={{textAlign:"center",padding:"12px 8px"}}><p style={{fontSize:9,color:C.s}}>PASS</p><p style={{fontSize:24,fontWeight:800,color:C.cy}}>{tw.sessions}</p><p style={{fontSize:9,color:C.s}}>av 6</p></GC>
 <GC sx={{textAlign:"center",padding:"12px 8px"}}><p style={{fontSize:9,color:C.s}}>VOLYM</p><p style={{fontSize:24,fontWeight:800,color:C.gr}}>{tw.vol>=1000?Math.round(tw.vol/100)/10+"t":tw.vol+"kg"}</p>
@@ -683,24 +722,28 @@ var dv=0;var gym=d.data.gym||{};Object.keys(gym).forEach(function(k){var s=gym[k
 if(s.kg!==undefined){dv+=(s.kg||0)*(s.reps||0);if(s.drops)s.drops.forEach(function(dr){dv+=(dr.kg||0)*(dr.reps||0)})}
 if(s.a){dv+=(s.a.kg||0)*(s.a.reps||0);dv+=(s.b?(s.b.kg||0)*(s.b.reps||0):0)}
 if(s.subs)s.subs.forEach(function(sub){if(sub)dv+=(sub.kg||0)*(sub.reps||0)})});
-return <div key={d.date} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+var lG=d.data.lunchGym||{};Object.keys(lG).forEach(function(k){var s=lG[k];if(s&&s.kg>0&&s.reps>0)dv+=s.kg*s.reps});
+return <div key={d.date} style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,padding:“6px 0”,borderBottom:“1px solid rgba(255,255,255,0.04)”}}>
+
 <div><span style={{fontSize:12,fontWeight:600}}>{DN[d.dow]}</span><span style={{fontSize:10,color:C.s,marginLeft:6}}>{DAYS[d.dow]?DAYS[d.dow].l:""}</span></div>
 <span style={{fontSize:12,fontWeight:700,color:C.gr,fontVariantNumeric:"tabular-nums"}}>{dv>=1000?Math.round(dv/100)/10+"t":dv+"kg"}</span>
 </div>})}</GC>}
 
 {prevWeeks.length>0&&<GC><p style={{fontSize:11,fontWeight:700,color:C.s,marginBottom:8}}>TIDIGARE VECKOR</p>
-{prevWeeks.map(function(wk){var wb=weekBuckets[wk];var wDate=new Date(wk+"T12:00");
-return <div key={wk} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.04)"}}>
+{prevWeeks.map(function(wk){var wb=weekBuckets[wk];var wDate=new Date(wk+“T12:00”);
+return <div key={wk} style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,padding:“8px 0”,borderBottom:“1px solid rgba(255,255,255,0.04)”}}>
+
 <div><span style={{fontSize:12,fontWeight:600,color:C.m}}>{wDate.getDate()+"/"+(wDate.getMonth()+1)}</span></div>
 <div style={{display:"flex",gap:16}}>
 <span style={{fontSize:11,color:C.cy}}>{wb.sessions} pass</span>
 <span style={{fontSize:11,fontWeight:700,color:C.gr,fontVariantNumeric:"tabular-nums"}}>{wb.vol>=1000?Math.round(wb.vol/100)/10+"t":wb.vol+"kg"}</span>
 </div></div>})}</GC>}
 
-{tw.sessions===0&&<GC sx={{textAlign:"center",padding:"20px"}}><p style={{fontSize:12,color:C.s}}>Inga pass loggade denna vecka ännu</p></GC>}
+{tw.sessions===0&&<GC sx={{textAlign:“center”,padding:“20px”}}><p style={{fontSize:12,color:C.s}}>Inga pass loggade denna vecka ännu</p></GC>}
+
 </div>})()}</div>}
 
-{sub==="cycle"&&<div>{(function(){
+{sub===“cycle”&&<div>{(function(){
 var phaseData={1:{vol:0,sessions:0,maxKg:0,exercises:0},2:{vol:0,sessions:0,maxKg:0,exercises:0},3:{vol:0,sessions:0,maxKg:0,exercises:0},4:{vol:0,sessions:0,maxKg:0,exercises:0}};
 allDays.forEach(function(day){var gym=day.data.gym||{};var dv=0;var maxK=0;var hasSets=false;var exCount=0;
 Object.keys(gym).forEach(function(k){var s=gym[k];if(!s)return;
@@ -709,16 +752,18 @@ if(s.drops)s.drops.forEach(function(d){dv+=(d.kg||0)*(d.reps||0)})}
 if(s.a){dv+=(s.a.kg||0)*(s.a.reps||0);if(s.a.kg>maxK)maxK=s.a.kg;
 dv+=(s.b?(s.b.kg||0)*(s.b.reps||0):0);hasSets=true;exCount++}
 if(s.subs){s.subs.forEach(function(sub){if(sub){dv+=(sub.kg||0)*(sub.reps||0);if(sub.kg>maxK)maxK=sub.kg;hasSets=true;exCount++}})}});
-if(hasSets){var ph=day.data.phase||"+";var phKey=1;
-if(ph==="++")phKey=2;else if(ph==="+++")phKey=3;else if(ph==="D")phKey=4;else phKey=1;
+var lGym=day.data.lunchGym||{};Object.keys(lGym).forEach(function(k){var s=lGym[k];if(s&&s.kg>0&&s.reps>0){dv+=s.kg*s.reps;if(s.kg>maxK)maxK=s.kg;hasSets=true;exCount++}});
+if(hasSets){var ph=day.data.phase||”+”;var phKey=1;
+if(ph===”++”)phKey=2;else if(ph===”+++”)phKey=3;else if(ph===“D”)phKey=4;else phKey=1;
 if(!phaseData[phKey])phKey=1;
 phaseData[phKey].vol+=dv;phaseData[phKey].sessions++;
 if(maxK>phaseData[phKey].maxKg)phaseData[phKey].maxKg=maxK;
 phaseData[phKey].exercises+=exCount}});
-var phases=[{k:1,ph:"+",label:"STYRKA",c:C.cy},{k:2,ph:"++",label:"HYPERTROFI",c:C.gr},{k:3,ph:"+++",label:"PUMP",c:C.or},{k:4,ph:"D",label:"DELOAD",c:C.pu}];
+var phases=[{k:1,ph:”+”,label:“STYRKA”,c:C.cy},{k:2,ph:”++”,label:“HYPERTROFI”,c:C.gr},{k:3,ph:”+++”,label:“PUMP”,c:C.or},{k:4,ph:“D”,label:“DELOAD”,c:C.pu}];
 var maxVol=Math.max.apply(null,phases.map(function(p){return phaseData[p.k].vol}));if(maxVol===0)maxVol=1;
 var hasData=phases.some(function(p){return phaseData[p.k].sessions>0});
 return <div>
+
 <p style={{fontSize:11,fontWeight:700,color:C.cy,marginBottom:12}}>VOLYM PER FAS</p>
 {hasData?<div style={{display:"flex",gap:6,alignItems:"flex-end",height:120,marginBottom:16}}>
 {phases.map(function(p){var d=phaseData[p.k];var h=d.vol>0?Math.max(20,d.vol/maxVol*100):8;
@@ -731,7 +776,8 @@ return <div key={p.k} style={{flex:1,display:"flex",flexDirection:"column",align
 
 {phases.map(function(p){var d=phaseData[p.k];if(d.sessions===0)return null;
 var avgVol=Math.round(d.vol/d.sessions);
-return <GC key={p.k} sx={{padding:"12px 14px"}} bc={p.c+"33"}>
+return <GC key={p.k} sx={{padding:“12px 14px”}} bc={p.c+“33”}>
+
 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
 <div style={{display:"flex",alignItems:"center",gap:8}}>
 <div style={{width:32,height:32,borderRadius:10,background:p.c+"20",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:800,color:p.c}}>{p.ph}</div>
@@ -787,8 +833,9 @@ return <GC key={s.k} sx={{textAlign:"center",padding:"14px 10px"}}>
 </GC>})}
 </div>
 
-{!adding?<button onClick={function(){setAdding(true)}} style={{width:"100%",padding:12,borderRadius:12,border:"1px dashed "+C.cy,background:"rgba(0,212,255,0.05)",color:C.cy,fontSize:13,fontWeight:700,marginBottom:14}}>📏 Logga mått</button>:
+{!adding?<button onClick={function(){setAdding(true)}} style={{width:“100%”,padding:12,borderRadius:12,border:“1px dashed “+C.cy,background:“rgba(0,212,255,0.05)”,color:C.cy,fontSize:13,fontWeight:700,marginBottom:14}}>📏 Logga mått</button>:
 <GC><p style={{fontSize:14,fontWeight:700,marginBottom:10}}>Logga mått</p>
+
 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
 {stats.map(function(s){return <div key={s.k}><label style={{fontSize:9,color:C.s}}>{s.l} ({s.u})</label>
 <input type="number" inputMode="decimal" value={form[s.k]} onChange={function(ev){setForm(function(f){var n={...f};n[s.k]=ev.target.value;return n})}} placeholder={latest&&latest[s.k]?String(latest[s.k]):"—"} style={{width:"100%",padding:"8px 10px",borderRadius:8,background:"rgba(255,255,255,0.06)",border:"1px solid "+C.b,color:"#fff",fontSize:15,fontWeight:700,textAlign:"center",outline:"none",marginTop:4}}/></div>})}
