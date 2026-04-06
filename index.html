@@ -18,6 +18,13 @@ body{background:#060a1f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes scaleIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes checkPop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes glow{0%,100%{box-shadow:0 0 8px rgba(0,255,136,0.2)}50%{box-shadow:0 0 20px rgba(0,255,136,0.4)}}
+.time-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.time-line{position:absolute;left:19px;top:0;bottom:0;width:2px;background:rgba(255,255,255,0.04)}
+.tl-section{position:relative;padding-left:36px;margin-bottom:4px}
+.tl-section::before{content:'';position:absolute;left:18px;top:14px;bottom:-4px;width:2px;background:rgba(255,255,255,0.04)}
 button{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 button:active{transform:scale(0.97);opacity:0.85}
 input:focus{border-color:rgba(0,212,255,0.4)!important;box-shadow:0 0 0 3px rgba(0,212,255,0.08)}
@@ -52,6 +59,38 @@ var WARMUP=[
 {id:"cs",t:"Couch stretch",s:2,r:45,cat:"lunge",note:"45 sek/sida"},
 {id:"cc",t:"Cat-cow",s:1,r:10,cat:"catcow",note:"Långsamt"},
 {id:"bp",t:"Band pull-aparts",s:1,r:15,cat:"facepull",note:"Kontrollerat"}];
+var MEALS=[
+{id:"lunch_snacks",name:"Lunch-snacks",time:"12:00",items:[
+{id:"frukt",name:"Frukt (banan, kiwi, passion)",protein:2,kcal:150},
+{id:"ost_80g",name:"Prästost 80g",protein:18,kcal:280},
+{id:"agg_3st",name:"Ägg × 3",protein:18,kcal:210},
+{id:"pumpafron",name:"Pumpafrön 30g",protein:9,kcal:170}]},
+{id:"post_training",name:"Post-training shake",time:"~19:00",items:[
+{id:"whey_2scoops",name:"Whey 2 scoops",protein:50,kcal:240}]},
+{id:"huvudmal",name:"Huvudmål",time:"~20:00",items:[
+{id:"mammas_mat",name:"Mammas mat",protein:10,kcal:300},
+{id:"agg_6st",name:"Ägg × 6",protein:36,kcal:420},
+{id:"kyckling",name:"Kyckling/färs",protein:25,kcal:300}]}
+];
+var MEAL_TARGETS={protein:170,kcal:2000};
+var SUPPS=[
+{id:"07_morgon",time:"07:00",label:"Morgontillskott",icon:"🌅",items:["Kollagen 10g","C-vitamin 500mg","Kreatin 5g","Beta-alanin 1.6g"]},
+{id:"12_middag",time:"12:00",label:"Middagstillskott",icon:"☀️",items:["Zink 25mg","Lion's Mane","Enzymes","Ashwagandha 300mg"]},
+{id:"16_pwo",time:"16:00",label:"Pre-workout",icon:"⚡",items:["Koffein 150mg","Citrulline 6g","Theanin 200mg"]},
+{id:"20_kvall",time:"20:00",label:"Kvällstillskott",icon:"🌙",items:["Omega-3 ×3","D3/K2","C-vitamin 100mg"]},
+{id:"22_natt",time:"22:00",label:"Natttillskott",icon:"😴",items:["Magnesium","Ashwagandha 300mg","Glycin 3g"]}
+];
+var SHOPPING=[
+{id:"agg",name:"Ägg 15-pack × 2",qty:"30 ägg",price:80,cat:"Mejeri & ägg"},
+{id:"ost",name:"Prästost 26% 500g",qty:"500g",price:55,cat:"Mejeri & ägg"},
+{id:"pumpafron",name:"Pumpafrön 200g",qty:"200g",price:30,cat:"Nötter & frö"},
+{id:"bananer",name:"Bananer",qty:"~10 st",price:30,cat:"Frukt"},
+{id:"kiwi",name:"Kiwi",qty:"6 st",price:25,cat:"Frukt"},
+{id:"passion",name:"Passionsfrukt",qty:"4 st",price:40,cat:"Frukt"},
+{id:"kyckling",name:"Kycklingfilé fryst 2kg",qty:"2 kg",price:129,cat:"Protein & frys"},
+{id:"gronsaker",name:"Frysta grönsaker",qty:"1 kg",price:25,cat:"Protein & frys"}
+];
+var SHOP_TOTAL=SHOPPING.reduce(function(a,i){return a+i.price},0);
 var PRG={
 0:{"+":["Incline bänkpress|4|6","Flat hantelpress|4|6","Dips med vikt|3|8","Cable flyes high-to-low|3|10","Lateral raises|4|12","Cable lateral raises|3|12"],
 "++":["Incline hantelpress|4|10","Flat bänkpress|3|10","Cable flyes alla vinklar|3|12","Dips|3|12","Pec deck|3|12","Lateral raises|5|12","Face pulls|3|15"],
@@ -320,11 +359,19 @@ return <div style={{background:"rgba(0,212,255,0.06)",border:"1px solid rgba(0,2
 <button onClick={function(){var k=parseFloat(kg)||0;var r=parseInt(reps)||0;if(r>0)p.onSave(k,r)}} style={{flex:2,padding:"10px",borderRadius:10,background:"linear-gradient(135deg,"+C.cy+",#0088cc)",border:"none",color:"#fff",fontSize:13,fontWeight:700,opacity:(parseInt(reps)||0)>0?"1":"0.4"}}>✓ Logga set</button>
 </div></div>}
 
+function TimeLabel(p){var hrs=new Date().getHours();var isNow=hrs>=p.h&&hrs<(p.hEnd||p.h+2);
+return <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,marginTop:p.first?0:10}}>
+<div style={{width:8,height:8,borderRadius:4,background:isNow?p.color||C.cy:"rgba(255,255,255,0.15)",boxShadow:isNow?"0 0 8px "+(p.color||C.cy)+"55":"none",flexShrink:0}}/>
+<span style={{fontSize:10,fontWeight:700,color:isNow?p.color||C.cy:C.s,fontVariantNumeric:"tabular-nums",letterSpacing:0.5}}>{p.time}</span>
+{isNow&&<span style={{fontSize:8,fontWeight:700,color:p.color||C.cy,padding:"1px 6px",borderRadius:4,background:(p.color||C.cy)+"15"}}>NU</span>}
+<div style={{flex:1,height:1,background:"rgba(255,255,255,0.04)"}}/>
+</div>}
+
 function TodayTab(p){
 var dow=p.dow,phase=p.phase,ph=PH[phase],today=DAYS[dow];
 var rawExs=PRG[dow][phase]||[];var exs=rawExs.map(parseEx);
 var key="day_"+dk()+"_"+dow;
-var ds=h(LS(key,{section:"idle",cardio:null,warmup:{},gym:{},cooldown:{},lunchDone:false,phase:phase})),data=ds[0],setDataRaw=ds[1];
+var ds=h(LS(key,{section:"idle",cardio:null,warmup:{},gym:{},cooldown:{},lunchDone:false,phase:phase,meals:{},supps:{}})),data=ds[0],setDataRaw=ds[1];
 ue(function(){if(!data.phase||data.phase!==phase){setData(function(d){return{...d,phase:phase}})}},[phase]);
 var es=h(null),editSet=es[0],setEditSet=es[1];
 var rts=h(null),restTimer=rts[0],setRestTimer=rts[1];
@@ -348,8 +395,32 @@ var now=new Date(),hrs=now.getHours();
 var greeting=hrs<5?"God natt":hrs<10?"God morgon":hrs<17?"God eftermiddag":"God kväll";
 var dateStr=DN[dow]+" "+now.getDate()+"/"+(now.getMonth()+1);
 var sec=data.section;
+var mealChecks=data.meals||{};var suppChecks=data.supps||{};
+var proteinEaten=0,kcalEaten=0;
+MEALS.forEach(function(meal){meal.items.forEach(function(item){if(mealChecks[meal.id+"_"+item.id]){proteinEaten+=item.protein;kcalEaten+=item.kcal}})});
+var proteinPct=Math.min(100,Math.round(proteinEaten/MEAL_TARGETS.protein*100));
+var totalSupps=SUPPS.reduce(function(a,w){return a+w.items.length},0);
+var doneSupps=0;SUPPS.forEach(function(w){w.items.forEach(function(_,i){if(suppChecks[w.id+"_"+i])doneSupps++})});
+function toggleMeal(mealId,itemId){setData(function(d){var m={...(d.meals||{})};var k=mealId+"_"+itemId;m[k]=!m[k];if(!m[k])delete m[k];return{...d,meals:m}})}
+function toggleSupp(windowId,idx){setData(function(d){var s={...(d.supps||{})};var k=windowId+"_"+idx;s[k]=!s[k];if(!s[k])delete s[k];return{...d,supps:s}})}
+var streak=(function(){var count=0;var check=new Date();check.setDate(check.getDate()-1);
+for(var i=0;i<60;i++){var cd=check.toISOString().slice(0,10);var cdow=check.getDay();
+var found=LS("day_"+cd+"_"+cdow,null);
+if(found&&found.gym&&Object.keys(found.gym).length>0)count++;
+else if(cdow!==0)break;
+check.setDate(check.getDate()-1)}
+if(gymDone)count++;return count})();
+var suppsDone=doneSupps===totalSupps&&totalSupps>0;
+var kostDone=proteinPct>=80;
+var fullDone=allDone&&kostDone&&suppsDone;
 return <div>
-<div style={{marginBottom:20}}><p style={{fontSize:13,color:C.s,letterSpacing:1}}>{dateStr.toUpperCase()}</p><h1 style={{fontSize:26,fontWeight:700,marginTop:4}}>{greeting} KM 👋</h1></div>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20}}>
+<div><p style={{fontSize:13,color:C.s,letterSpacing:1}}>{dateStr.toUpperCase()}</p><h1 style={{fontSize:26,fontWeight:700,marginTop:4}}>{greeting} KM 👋</h1></div>
+{streak>0&&<div style={{background:"linear-gradient(135deg,rgba(239,68,68,0.15),rgba(251,146,60,0.1))",border:"1px solid rgba(239,68,68,0.25)",borderRadius:12,padding:"8px 12px",textAlign:"center"}}>
+<p style={{fontSize:18,fontWeight:800,color:"#ef4444"}}>🔥 {streak}</p>
+<p style={{fontSize:8,fontWeight:600,color:C.s}}>STREAK</p>
+</div>}
+</div>
 <GC gl={ph.c} bc={ph.c+"33"} sx={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,padding:"12px 16px"}}>
 <div><div style={{display:"flex",gap:8,alignItems:"center"}}><span style={{fontSize:11,fontWeight:700,color:ph.c,letterSpacing:2}}>VECKA {p.wk} / 4</span><span style={{fontSize:10,background:ph.c+"22",color:ph.c,padding:"2px 8px",borderRadius:20}}>{phase}</span></div><p style={{fontSize:15,fontWeight:700,marginTop:2}}>{ph.l}</p></div>
 <Ring sz={48} pr={(p.wk/4)*100} co={ph.c}><span style={{fontSize:13,fontWeight:700}}>{p.wk}</span></Ring></GC>
@@ -361,14 +432,156 @@ return <div style={{background:"linear-gradient(135deg,rgba(255,107,0,0.12),rgba
 <p style={{fontSize:10,color:C.s,marginTop:2}}>Dags att byta till {nextPh} {nextPhInfo.l}?</p></div>
 <button onClick={function(e){e.stopPropagation();p.setWk(nextWk)}} style={{padding:"8px 12px",borderRadius:10,background:nextPhInfo.c+"22",border:"1px solid "+nextPhInfo.c+"44",color:nextPhInfo.c,fontSize:11,fontWeight:700,flexShrink:0}}>Byt →</button>
 </div>})()}
+{sec==="idle"&&hrs>=12&&hrs<16&&!suppChecks["07_morgon_0"]&&<div style={{background:"rgba(251,146,60,0.08)",border:"1px solid rgba(251,146,60,0.2)",borderRadius:12,padding:"10px 14px",marginBottom:10,display:"flex",alignItems:"center",gap:10}}>
+<span style={{fontSize:16}}>⚠️</span><p style={{fontSize:11,color:"#fb923c"}}>Morgontillskott ej tagna — ta dem nu!</p>
+</div>}
+{sec==="idle"&&hrs>=19&&proteinEaten<100&&<div style={{background:"rgba(239,68,68,0.08)",border:"1px solid rgba(239,68,68,0.2)",borderRadius:12,padding:"10px 14px",marginBottom:10,display:"flex",alignItems:"center",gap:10}}>
+<span style={{fontSize:16}}>🥩</span><p style={{fontSize:11,color:"#ef4444"}}>Bara {proteinEaten}g protein — du behöver {MEAL_TARGETS.protein-proteinEaten}g till!</p>
+</div>}
 {sec==="idle"&&<div>
-<p style={{fontSize:12,fontWeight:600,color:C.s,letterSpacing:1,marginBottom:10}}>DAGENS SCHEMA</p>
-<SectionBox icon="🏃" title="Kardio" sub={today.cardio} done={cardioDone} onClick={function(){setData(function(d){return{...d,section:"cardio"}})}}/>
+{/* PROTEIN PROGRESS BAR */}
+<div style={{background:"rgba(0,212,255,0.06)",border:"1px solid rgba(0,212,255,0.15)",borderRadius:14,padding:"10px 14px",marginBottom:14}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+<span style={{fontSize:11,fontWeight:700,color:C.cy}}>PROTEIN IDAG</span>
+<span style={{fontSize:13,fontWeight:800,color:proteinPct>=80?C.gr:C.cy,fontVariantNumeric:"tabular-nums"}}>{proteinEaten}/{MEAL_TARGETS.protein}g</span>
+</div>
+<div style={{height:8,borderRadius:4,background:"rgba(255,255,255,0.06)",overflow:"hidden"}}>
+<div style={{height:"100%",width:proteinPct+"%",background:proteinPct>=80?"linear-gradient(90deg,#00d4ff,#00ff88)":"linear-gradient(90deg,#00d4ff,#0088cc)",borderRadius:4,transition:"width .4s ease-out"}}/></div>
+<div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
+<span style={{fontSize:9,color:C.s}}>{kcalEaten} kcal</span>
+<span style={{fontSize:9,color:C.s}}>Tillskott: {doneSupps}/{totalSupps}</span>
+</div></div>
+
+<p style={{fontSize:12,fontWeight:600,color:C.s,letterSpacing:1,marginBottom:10}}>DAGENS TIDSLINJE</p>
+
+{/* 07:00 MORGONTILLSKOTT */}
+<TimeLabel time="07:00" h={7} hEnd={10} color="#a78bfa" first/>
+{(function(){var w=SUPPS[0];var done=w.items.every(function(_,i){return suppChecks[w.id+"_"+i]});
+return <GC bc={done?"rgba(0,255,136,0.15)":"rgba(167,139,250,0.15)"} sx={{opacity:done?0.6:1}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+<div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:16}}>{w.icon}</span><div><p style={{fontSize:12,fontWeight:700,color:"#a78bfa"}}>{w.time} — {w.label}</p></div></div>
+{done&&<span style={{fontSize:14}}>✅</span>}
+</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:6}}>{w.items.map(function(item,i){var checked=suppChecks[w.id+"_"+i];
+return <button key={i} onClick={function(){toggleSupp(w.id,i)}} style={{padding:"6px 10px",borderRadius:8,background:checked?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(checked?"rgba(0,255,136,0.2)":"rgba(255,255,255,0.08)"),color:checked?C.gr:"#fff",fontSize:11,fontWeight:checked?700:500,transition:"all .15s"}}>{checked?"✓ ":""}{item}</button>})}</div>
+</GC>})()}
+
+{/* 12:00 LUNCH-SNACKS */}
+<TimeLabel time="12:00" h={12} hEnd={13} color="#4ade80"/>
+{(function(){var meal=MEALS[0];var allDone=meal.items.every(function(item){return mealChecks[meal.id+"_"+item.id]});
+var mealP=meal.items.reduce(function(a,item){return a+(mealChecks[meal.id+"_"+item.id]?item.protein:0)},0);
+var mealK=meal.items.reduce(function(a,item){return a+(mealChecks[meal.id+"_"+item.id]?item.kcal:0)},0);
+return <GC bc={allDone?"rgba(0,255,136,0.15)":"rgba(74,222,128,0.15)"} sx={{opacity:allDone?0.6:1}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+<div><p style={{fontSize:12,fontWeight:700,color:"#4ade80"}}>{meal.time} — {meal.name}</p>
+<p style={{fontSize:9,color:C.s}}>{mealP}g protein · {mealK} kcal</p></div>
+{allDone&&<span style={{fontSize:14}}>✅</span>}
+</div>
+{meal.items.map(function(item){var checked=mealChecks[meal.id+"_"+item.id];
+return <div key={item.id} onClick={function(){toggleMeal(meal.id,item.id)}} style={{display:"flex",alignItems:"center",gap:10,padding:"7px 10px",borderRadius:8,background:checked?"rgba(0,255,136,0.06)":"rgba(255,255,255,0.02)",border:"1px solid "+(checked?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.05)"),marginBottom:3,cursor:"pointer",transition:"all .15s"}}>
+<div style={{width:20,height:20,borderRadius:6,border:checked?"none":"2px solid rgba(255,255,255,0.15)",background:checked?C.gr:"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all .15s"}}>{checked&&<span style={{fontSize:11,color:"#060a1f"}}>✓</span>}</div>
+<span style={{fontSize:12,fontWeight:checked?600:400,color:checked?C.gr:"#fff",flex:1}}>{item.name}</span>
+<span style={{fontSize:10,color:C.s,fontVariantNumeric:"tabular-nums"}}>{item.protein}g P</span>
+</div>})}
+</GC>})()}
+
+{/* 12:00 MIDDAGSTILLSKOTT */}
+<TimeLabel time="12:00" h={12} hEnd={13} color="#a78bfa"/>
+{(function(){var w=SUPPS[1];var done=w.items.every(function(_,i){return suppChecks[w.id+"_"+i]});
+return <GC bc={done?"rgba(0,255,136,0.15)":"rgba(167,139,250,0.15)"} sx={{opacity:done?0.6:1}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+<div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:16}}>{w.icon}</span><p style={{fontSize:12,fontWeight:700,color:"#a78bfa"}}>{w.time} — {w.label}</p></div>
+{done&&<span style={{fontSize:14}}>✅</span>}
+</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:6}}>{w.items.map(function(item,i){var checked=suppChecks[w.id+"_"+i];
+return <button key={i} onClick={function(){toggleSupp(w.id,i)}} style={{padding:"6px 10px",borderRadius:8,background:checked?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(checked?"rgba(0,255,136,0.2)":"rgba(255,255,255,0.08)"),color:checked?C.gr:"#fff",fontSize:11,fontWeight:checked?700:500,transition:"all .15s"}}>{checked?"✓ ":""}{item}</button>})}</div>
+</GC>})()}
+
+{/* 12:30 LUNCH-PASS */}
+<TimeLabel time="12:30" h={12} hEnd={13} color={C.pu}/>
 <SectionBox icon="🔄" title="Lunch-pass" sub={"Underarmar + pump • "+today.lunch.split(" + ").length+" övningar"} done={lunchDone} color={C.pu} onClick={function(){setData(function(d){return{...d,section:"lunch"}})}}/>
+
+{/* KARDIO */}
+<TimeLabel time="13:00" h={13} hEnd={15} color={C.cy}/>
+<SectionBox icon="🏃" title="Kardio" sub={today.cardio} done={cardioDone} onClick={function(){setData(function(d){return{...d,section:"cardio"}})}}/>
+
+{/* 16:00 PRE-WORKOUT */}
+<TimeLabel time="16:00" h={16} hEnd={17} color="#a78bfa"/>
+{(function(){var w=SUPPS[2];var done=w.items.every(function(_,i){return suppChecks[w.id+"_"+i]});
+return <GC bc={done?"rgba(0,255,136,0.15)":"rgba(167,139,250,0.15)"} sx={{opacity:done?0.6:1}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+<div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:16}}>{w.icon}</span><p style={{fontSize:12,fontWeight:700,color:"#a78bfa"}}>{w.time} — {w.label}</p></div>
+{done&&<span style={{fontSize:14}}>✅</span>}
+</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:6}}>{w.items.map(function(item,i){var checked=suppChecks[w.id+"_"+i];
+return <button key={i} onClick={function(){toggleSupp(w.id,i)}} style={{padding:"6px 10px",borderRadius:8,background:checked?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(checked?"rgba(0,255,136,0.2)":"rgba(255,255,255,0.08)"),color:checked?C.gr:"#fff",fontSize:11,fontWeight:checked?700:500,transition:"all .15s"}}>{checked?"✓ ":""}{item}</button>})}</div>
+</GC>})()}
+
+{/* UPPVÄRMNING + GYM */}
+<TimeLabel time="17:00" h={17} hEnd={19} color={ph.c}/>
 <SectionBox icon="🔥" title="Uppvärmning" sub="Hållning & längd • 5 min" done={warmupDone} color={C.or} onClick={function(){setData(function(d){return{...d,section:"warmup"}})}}/>
 <SectionBox icon={today.i} title={"Gym — "+today.l} sub={today.t+" • "+exs.length+" övningar"} done={gymDone} color={ph.c} onClick={function(){setData(function(d){return{...d,section:"gym"}})}}/>
-{allDone&&<button onClick={function(){setData(function(d){return{...d,section:"summary"}})}} style={{width:"100%",padding:14,borderRadius:14,background:"linear-gradient(135deg,#00ff88,#00cc66)",border:"none",color:"#060a1f",fontSize:16,fontWeight:800,marginTop:8,boxShadow:"0 4px 20px rgba(0,255,136,0.3)"}}>🎉 Summera dagen</button>}
-{!allDone&&<div style={{display:"flex",gap:8,marginTop:8}}>{[{l:"Kardio",d:cardioDone},{l:"Lunch",d:lunchDone},{l:"Uppv",d:warmupDone},{l:"Gym",d:gymDone}].map(function(x,i){return <div key={i} style={{flex:1,textAlign:"center"}}><div style={{width:"100%",height:4,borderRadius:2,background:x.d?"#00ff88":"rgba(255,255,255,0.06)",marginBottom:4}}></div><span style={{fontSize:8,color:x.d?C.gr:C.s}}>{x.l}</span></div>})}</div>}
+
+{/* POST-TRAINING + HUVUDMÅL */}
+<TimeLabel time="~19:00" h={19} hEnd={20} color="#4ade80"/>
+{(function(){var meal=MEALS[1];var allDone=meal.items.every(function(item){return mealChecks[meal.id+"_"+item.id]});
+return <GC bc={allDone?"rgba(0,255,136,0.15)":"rgba(74,222,128,0.15)"} sx={{opacity:allDone?0.6:1}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+<p style={{fontSize:12,fontWeight:700,color:"#4ade80"}}>{meal.time} — {meal.name}</p>
+{allDone&&<span style={{fontSize:14}}>✅</span>}
+</div>
+{meal.items.map(function(item){var checked=mealChecks[meal.id+"_"+item.id];
+return <div key={item.id} onClick={function(){toggleMeal(meal.id,item.id)}} style={{display:"flex",alignItems:"center",gap:10,padding:"7px 10px",borderRadius:8,background:checked?"rgba(0,255,136,0.06)":"rgba(255,255,255,0.02)",border:"1px solid "+(checked?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.05)"),marginBottom:3,cursor:"pointer"}}>
+<div style={{width:20,height:20,borderRadius:6,border:checked?"none":"2px solid rgba(255,255,255,0.15)",background:checked?C.gr:"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{checked&&<span style={{fontSize:11,color:"#060a1f"}}>✓</span>}</div>
+<span style={{fontSize:12,fontWeight:checked?600:400,color:checked?C.gr:"#fff",flex:1}}>{item.name}</span>
+<span style={{fontSize:10,color:C.s,fontVariantNumeric:"tabular-nums"}}>{item.protein}g P</span>
+</div>})}
+</GC>})()}
+
+<TimeLabel time="~20:00" h={20} hEnd={21} color="#4ade80"/>
+{(function(){var meal=MEALS[2];var allDone=meal.items.every(function(item){return mealChecks[meal.id+"_"+item.id]});
+var mealP=meal.items.reduce(function(a,item){return a+(mealChecks[meal.id+"_"+item.id]?item.protein:0)},0);
+return <GC bc={allDone?"rgba(0,255,136,0.15)":"rgba(74,222,128,0.15)"} sx={{opacity:allDone?0.6:1}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
+<div><p style={{fontSize:12,fontWeight:700,color:"#4ade80"}}>{meal.time} — {meal.name}</p>
+<p style={{fontSize:9,color:C.s}}>{mealP}g protein</p></div>
+{allDone&&<span style={{fontSize:14}}>✅</span>}
+</div>
+{meal.items.map(function(item){var checked=mealChecks[meal.id+"_"+item.id];
+return <div key={item.id} onClick={function(){toggleMeal(meal.id,item.id)}} style={{display:"flex",alignItems:"center",gap:10,padding:"7px 10px",borderRadius:8,background:checked?"rgba(0,255,136,0.06)":"rgba(255,255,255,0.02)",border:"1px solid "+(checked?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.05)"),marginBottom:3,cursor:"pointer"}}>
+<div style={{width:20,height:20,borderRadius:6,border:checked?"none":"2px solid rgba(255,255,255,0.15)",background:checked?C.gr:"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>{checked&&<span style={{fontSize:11,color:"#060a1f"}}>✓</span>}</div>
+<span style={{fontSize:12,fontWeight:checked?600:400,color:checked?C.gr:"#fff",flex:1}}>{item.name}</span>
+<span style={{fontSize:10,color:C.s,fontVariantNumeric:"tabular-nums"}}>{item.protein}g P</span>
+</div>})}
+</GC>})()}
+
+{/* KVÄLLS + NATT TILLSKOTT */}
+<TimeLabel time="20:00" h={20} hEnd={22} color="#a78bfa"/>
+{(function(){var w=SUPPS[3];var done=w.items.every(function(_,i){return suppChecks[w.id+"_"+i]});
+return <GC bc={done?"rgba(0,255,136,0.15)":"rgba(167,139,250,0.15)"} sx={{opacity:done?0.6:1}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+<div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:16}}>{w.icon}</span><p style={{fontSize:12,fontWeight:700,color:"#a78bfa"}}>{w.time} — {w.label}</p></div>
+{done&&<span style={{fontSize:14}}>✅</span>}
+</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:6}}>{w.items.map(function(item,i){var checked=suppChecks[w.id+"_"+i];
+return <button key={i} onClick={function(){toggleSupp(w.id,i)}} style={{padding:"6px 10px",borderRadius:8,background:checked?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(checked?"rgba(0,255,136,0.2)":"rgba(255,255,255,0.08)"),color:checked?C.gr:"#fff",fontSize:11,fontWeight:checked?700:500,transition:"all .15s"}}>{checked?"✓ ":""}{item}</button>})}</div>
+</GC>})()}
+
+<TimeLabel time="22:00" h={22} hEnd={24} color="#a78bfa"/>
+{(function(){var w=SUPPS[4];var done=w.items.every(function(_,i){return suppChecks[w.id+"_"+i]});
+return <GC bc={done?"rgba(0,255,136,0.15)":"rgba(167,139,250,0.15)"} sx={{opacity:done?0.6:1}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+<div style={{display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:16}}>{w.icon}</span><p style={{fontSize:12,fontWeight:700,color:"#a78bfa"}}>{w.time} — {w.label}</p></div>
+{done&&<span style={{fontSize:14}}>✅</span>}
+</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:6}}>{w.items.map(function(item,i){var checked=suppChecks[w.id+"_"+i];
+return <button key={i} onClick={function(){toggleSupp(w.id,i)}} style={{padding:"6px 10px",borderRadius:8,background:checked?"rgba(0,255,136,0.12)":"rgba(255,255,255,0.04)",border:"1px solid "+(checked?"rgba(0,255,136,0.2)":"rgba(255,255,255,0.08)"),color:checked?C.gr:"#fff",fontSize:11,fontWeight:checked?700:500,transition:"all .15s"}}>{checked?"✓ ":""}{item}</button>})}</div>
+</GC>})()}
+
+{/* SUMMERA */}
+{fullDone&&<button onClick={function(){setData(function(d){return{...d,section:"summary"}})}} style={{width:"100%",padding:14,borderRadius:14,background:"linear-gradient(135deg,#00ff88,#00cc66)",border:"none",color:"#060a1f",fontSize:16,fontWeight:800,marginTop:8,boxShadow:"0 4px 20px rgba(0,255,136,0.3)"}}>🎉 Summera dagen</button>}
+{!fullDone&&allDone&&<button onClick={function(){setData(function(d){return{...d,section:"summary"}})}} style={{width:"100%",padding:12,borderRadius:14,background:"rgba(0,255,136,0.1)",border:"1px solid rgba(0,255,136,0.25)",color:C.gr,fontSize:14,fontWeight:700,marginTop:8}}>📊 Summera (träning klar)</button>}
+{!allDone&&<div style={{display:"flex",gap:6,marginTop:10}}>{[{l:"Kardio",d:cardioDone},{l:"Lunch",d:lunchDone},{l:"Uppv",d:warmupDone},{l:"Gym",d:gymDone},{l:"Kost",d:proteinPct>=80},{l:"Supps",d:doneSupps===totalSupps&&totalSupps>0}].map(function(x,i){return <div key={i} style={{flex:1,textAlign:"center"}}><div style={{width:"100%",height:4,borderRadius:2,background:x.d?"#00ff88":"rgba(255,255,255,0.06)",marginBottom:4}}></div><span style={{fontSize:7,color:x.d?C.gr:C.s}}>{x.l}</span></div>})}</div>}
 </div>}
 {sec==="cardio"&&<div style={{animation:"slideUp .2s ease-out"}}>
 <button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{background:"none",border:"none",color:C.cy,fontSize:13,fontWeight:600,marginBottom:16}}>← Tillbaka</button>
@@ -549,7 +762,9 @@ if(subi<e.subs.length-1)setEditSet({ei:ei,si:si,gIdx:subi+1});else{setEditSet(nu
 </div>}
 {sec==="summary"&&<div style={{animation:"slideUp .2s ease-out"}}>
 <h2 style={{fontSize:22,fontWeight:700,marginBottom:16}}>🎉 Dagens Summering</h2>
-<GC sx={{textAlign:"center",padding:"20px 16px"}}><p style={{fontSize:36,fontWeight:800,color:C.gr}}>💪</p><p style={{fontSize:18,fontWeight:700,marginTop:8}}>Bra jobbat KM!</p><p style={{fontSize:12,color:C.m,marginTop:4}}>{DN[dow]} — {phase} {ph.l}</p></GC>
+<GC sx={{textAlign:"center",padding:"20px 16px"}}><p style={{fontSize:36,fontWeight:800,color:C.gr}}>{fullDone?"🏆":"💪"}</p><p style={{fontSize:18,fontWeight:700,marginTop:8}}>{fullDone?"Perfekt dag!":"Bra jobbat KM!"}</p><p style={{fontSize:12,color:C.m,marginTop:4}}>{DN[dow]} — {phase} {ph.l}</p>
+{streak>1&&<div style={{display:"inline-flex",alignItems:"center",gap:6,marginTop:8,padding:"4px 14px",borderRadius:20,background:"rgba(239,68,68,0.12)",border:"1px solid rgba(239,68,68,0.2)"}}><span style={{fontSize:14}}>🔥</span><span style={{fontSize:13,fontWeight:800,color:"#ef4444"}}>{streak} dagars streak!</span></div>}
+</GC>
 {(function(){var totalVol=0,totalReps=0,maxKg=0,lunchSets=0;
 function addSet(s){if(s&&s.kg>0&&s.reps>0){totalVol+=s.kg*s.reps;totalReps+=s.reps;if(s.kg>maxKg)maxKg=s.kg}else if(s&&s.reps>0){totalReps+=s.reps}}
 Object.keys(data.gym).forEach(function(k){var s=data.gym[k];if(!s)return;
@@ -567,6 +782,14 @@ return <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
 <GC sx={{textAlign:"center",padding:"14px 10px"}}><p style={{fontSize:22,fontWeight:800,color:C.or}}>~{calEst}</p><p style={{fontSize:9,color:C.s,marginTop:2}}>kcal (estimat)</p></GC>
 {maxKg>0&&<GC sx={{textAlign:"center",padding:"14px 10px",gridColumn:"1/3"}}><p style={{fontSize:22,fontWeight:800,color:C.pu}}>{maxKg} kg</p><p style={{fontSize:9,color:C.s,marginTop:2}}>Tyngsta vikt idag</p></GC>}
 </div>})()}
+<GC sx={{marginTop:8}}>
+<p style={{fontSize:10,fontWeight:700,color:"#4ade80",marginBottom:8}}>KOST & TILLSKOTT</p>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+<div style={{textAlign:"center"}}><p style={{fontSize:22,fontWeight:800,color:proteinPct>=80?C.gr:C.cy}}>{proteinEaten}g</p><p style={{fontSize:9,color:C.s}}>Protein ({proteinPct}%)</p></div>
+<div style={{textAlign:"center"}}><p style={{fontSize:22,fontWeight:800,color:C.cy}}>{kcalEaten}</p><p style={{fontSize:9,color:C.s}}>kcal</p></div>
+<div style={{textAlign:"center"}}><p style={{fontSize:22,fontWeight:800,color:doneSupps===totalSupps?C.gr:C.s}}>{doneSupps}/{totalSupps}</p><p style={{fontSize:9,color:C.s}}>Tillskott</p></div>
+<div style={{textAlign:"center"}}><p style={{fontSize:22,fontWeight:800,color:proteinPct>=80&&doneSupps===totalSupps?C.gr:C.or}}>{proteinPct>=80&&doneSupps===totalSupps?"✅":"❌"}</p><p style={{fontSize:9,color:C.s}}>Kost-mål</p></div>
+</div></GC>
 <button onClick={function(){setData(function(d){return{...d,section:"idle"}})}} style={{width:"100%",padding:13,borderRadius:14,background:"rgba(255,255,255,0.06)",border:"1px solid "+C.b,color:C.s,fontSize:14,fontWeight:600,marginTop:12}}>← Tillbaka</button>
 </div>}
 </div>}
@@ -574,7 +797,7 @@ function ProgramTab(p){var ws=h(p.wk),viewWk=ws[0],setViewWk=ws[1];var phase=PHA
 var typeBadge=function(type){if(type==="normal")return null;var tc={dropset:{l:"DROP",c:C.or},superset:{l:"SUPER",c:C.pu},pyramid:{l:"PYRAMID",c:C.cy},"21s":{l:"21s",c:"#fdcb6e"},giant:{l:"GIANT",c:C.rd}};
 var tb=tc[type];if(!tb)return null;return <span style={{fontSize:7,fontWeight:800,padding:"2px 5px",borderRadius:4,background:tb.c+"20",color:tb.c,marginLeft:6}}>{tb.l}</span>};
 return <div>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:16}}>📋 Program</h1>
+<h1 style={{fontSize:24,fontWeight:700,marginBottom:16}}>💪 Träningsprogram</h1>
 <div style={{display:"flex",gap:6,marginBottom:16}}>{[1,2,3,4].map(function(w){var wph=PHASE_MAP[w],wc=PH[wph].c;return <button key={w} onClick={function(){setViewWk(w)}} style={{flex:1,padding:"10px 0",borderRadius:12,fontSize:11,fontWeight:700,border:"1px solid "+(viewWk===w?wc+"66":C.b),background:viewWk===w?wc+"15":"transparent",color:viewWk===w?wc:C.s}}><div>{wph}</div><div style={{fontSize:8,marginTop:2}}>V{w}</div></button>})}</div>
 <p style={{fontSize:11,color:ph.c,fontWeight:700,marginBottom:12}}>{phase} {ph.l} — {ph.d}</p>
 {DAYS.map(function(d,i){var isToday=i===p.dow;var dayExs=(PRG[i][phase]||[]).map(parseEx);var open=exp===i;
@@ -623,7 +846,6 @@ var maxMuscle=muscleList.length>0?muscleList[0][1]:1;
 
 var ss=h("overview"),sub=ss[0],setSub=ss[1];
 return <div>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:12}}>📊 Historik</h1>
 <div style={{display:"flex",gap:4,marginBottom:14}}>
 {[{k:"overview",l:"Översikt"},{k:"week",l:"Vecka"},{k:"cycle",l:"Cykel"},{k:"prs",l:"PRs"},{k:"muscle",l:"Muskler"}].map(function(t){
 return <button key={t.k} onClick={function(){setSub(t.k)}} style={{flex:1,padding:"8px 0",borderRadius:8,border:sub===t.k?"1px solid "+C.cy:"1px solid "+C.b,background:sub===t.k?"rgba(0,212,255,0.1)":C.b,color:sub===t.k?C.cy:C.s,fontSize:11,fontWeight:600}}>{t.l}</button>})}
@@ -830,7 +1052,6 @@ setBody(function(b){return{...b,photos:[...b.photos,{date:new Date().toISOString
 setAddPhoto(false)};img.src=re.target.result};reader.readAsDataURL(file)}
 var stats=[{l:"Vikt",k:"weight",u:"kg",c:C.cy},{l:"Midja",k:"waist",u:"cm",c:C.or},{l:"Armar",k:"arms",u:"cm",c:C.pu},{l:"Bröst",k:"chest",u:"cm",c:C.gr}];
 return <div>
-<h1 style={{fontSize:24,fontWeight:700,marginBottom:16}}>💪 Kropp & Mått</h1>
 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
 {stats.map(function(s){var val=latest&&latest[s.k]?latest[s.k]:null;var d=diff(s.k);
 return <GC key={s.k} sx={{textAlign:"center",padding:"14px 10px"}}>
@@ -874,6 +1095,113 @@ return <GC key={s.k} sx={{textAlign:"center",padding:"14px 10px"}}>
 </div>}
 {photos.length===0&&<GC sx={{textAlign:"center",padding:"16px"}}><p style={{fontSize:12,color:C.s}}>Inga foton än — ta ett varje söndag</p></GC>}
 </div>}
+function KostTab(){
+var ss=h("schema"),sub=ss[0],setSub=ss[1];
+var totalP=MEALS.reduce(function(a,m){return a+m.items.reduce(function(b,i){return b+i.protein},0)},0);
+var totalK=MEALS.reduce(function(a,m){return a+m.items.reduce(function(b,i){return b+i.kcal},0)},0);
+return <div>
+<h1 style={{fontSize:24,fontWeight:700,marginBottom:12}}>🍽️ Kost</h1>
+<div style={{display:"flex",gap:4,marginBottom:14}}>
+{[{k:"schema",l:"Kostschema"},{k:"shopping",l:"Inköpslista"},{k:"supps",l:"Tillskott"}].map(function(t){
+return <button key={t.k} onClick={function(){setSub(t.k)}} style={{flex:1,padding:"8px 0",borderRadius:8,border:sub===t.k?"1px solid #4ade80":"1px solid "+C.b,background:sub===t.k?"rgba(74,222,128,0.1)":C.b,color:sub===t.k?"#4ade80":C.s,fontSize:11,fontWeight:600}}>{t.l}</button>})}
+</div>
+
+{sub==="schema"&&<div>
+{/* DAGSMÅL */}
+<GC bc="rgba(74,222,128,0.2)" sx={{padding:"12px 14px",marginBottom:12}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+<div><p style={{fontSize:13,fontWeight:700,color:"#4ade80"}}>Dagsmål</p><p style={{fontSize:10,color:C.s,marginTop:2}}>Fast kostplan — bocka av i Idag-tabben</p></div>
+<div style={{textAlign:"right"}}><p style={{fontSize:18,fontWeight:800,color:"#4ade80"}}>{totalP}g P</p><p style={{fontSize:10,color:C.s}}>{totalK} kcal</p></div>
+</div></GC>
+
+{/* MÅLTIDER */}
+{MEALS.map(function(meal){
+var mealP=meal.items.reduce(function(a,i){return a+i.protein},0);
+var mealK=meal.items.reduce(function(a,i){return a+i.kcal},0);
+return <GC key={meal.id}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+<div><p style={{fontSize:14,fontWeight:700}}>{meal.name}</p><p style={{fontSize:10,color:C.s}}>{meal.time}</p></div>
+<div style={{textAlign:"right"}}><span style={{fontSize:13,fontWeight:800,color:"#4ade80"}}>{mealP}g P</span><span style={{fontSize:11,color:C.s,marginLeft:8}}>{mealK} kcal</span></div>
+</div>
+{meal.items.map(function(item){
+return <div key={item.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"6px 10px",borderRadius:8,background:"rgba(255,255,255,0.02)",border:"1px solid rgba(255,255,255,0.04)",marginBottom:3}}>
+<span style={{fontSize:12,color:C.m}}>{item.name}</span>
+<div style={{display:"flex",gap:12}}>
+<span style={{fontSize:11,fontWeight:700,color:"#4ade80",fontVariantNumeric:"tabular-nums",minWidth:36,textAlign:"right"}}>{item.protein}g</span>
+<span style={{fontSize:11,color:C.s,fontVariantNumeric:"tabular-nums",minWidth:48,textAlign:"right"}}>{item.kcal} kcal</span>
+</div></div>})}
+</GC>})}
+
+{/* SÖNDAGS-PREP */}
+<GC bc="rgba(251,146,60,0.15)">
+<p style={{fontSize:12,fontWeight:700,color:"#fb923c",marginBottom:8}}>🔧 SÖNDAGS-PREP</p>
+{["Koka 12 ägg (10 min) → kylskåp med skal (7 dagar)","Skär ost i bitar → plastpåse","Portionera pumpafrön i påsar (30g var)"].map(function(step,i){
+return <div key={i} style={{display:"flex",gap:8,padding:"5px 0",alignItems:"flex-start"}}>
+<span style={{fontSize:12,fontWeight:800,color:"#fb923c",width:18,flexShrink:0}}>{i+1}.</span>
+<span style={{fontSize:11,color:C.m}}>{step}</span>
+</div>})}
+</GC>
+</div>}
+
+{sub==="shopping"&&<div>
+<GC bc="rgba(251,146,60,0.15)" sx={{padding:"12px 14px",marginBottom:12}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+<div><p style={{fontSize:13,fontWeight:700,color:"#fb923c"}}>Veckolista</p><p style={{fontSize:10,color:C.s,marginTop:2}}>Willys — handla varje söndag</p></div>
+<div style={{textAlign:"right"}}><p style={{fontSize:18,fontWeight:800,color:"#fb923c"}}>~{SHOP_TOTAL} kr</p><p style={{fontSize:10,color:C.s}}>per vecka</p></div>
+</div></GC>
+
+{(function(){var cats={};SHOPPING.forEach(function(item){if(!cats[item.cat])cats[item.cat]=[];cats[item.cat].push(item)});
+return Object.keys(cats).map(function(cat){
+return <div key={cat} style={{marginBottom:14}}>
+<p style={{fontSize:10,fontWeight:700,color:"#fb923c",letterSpacing:1,marginBottom:6}}>{cat.toUpperCase()}</p>
+{cats[cat].map(function(item){
+return <div key={item.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 12px",borderRadius:10,background:"rgba(255,255,255,0.03)",border:"1px solid rgba(255,255,255,0.05)",marginBottom:3}}>
+<div><p style={{fontSize:12,fontWeight:600}}>{item.name}</p><p style={{fontSize:10,color:C.s}}>{item.qty}</p></div>
+<span style={{fontSize:13,fontWeight:700,color:"#fb923c",fontVariantNumeric:"tabular-nums"}}>{item.price} kr</span>
+</div>})}
+</div>})})()}
+
+<GC bc="rgba(167,139,250,0.12)" sx={{padding:"10px 14px"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+<span style={{fontSize:11,color:C.s}}>+ Whey-100 (räcker ~4v)</span>
+<span style={{fontSize:11,color:"#a78bfa",fontWeight:600}}>~86 kr/v</span>
+</div></GC>
+</div>}
+
+{sub==="supps"&&<div>
+{/* DAGSMÅL TILLSKOTT */}
+<GC bc="rgba(167,139,250,0.15)" sx={{padding:"12px 14px",marginBottom:12}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+<div><p style={{fontSize:13,fontWeight:700,color:"#a78bfa"}}>Dagliga tillskott</p><p style={{fontSize:10,color:C.s,marginTop:2}}>5 fönster — bocka av i Idag-tabben</p></div>
+<div style={{textAlign:"right"}}><p style={{fontSize:18,fontWeight:800,color:"#a78bfa"}}>{SUPPS.reduce(function(a,w){return a+w.items.length},0)}</p><p style={{fontSize:10,color:C.s}}>tillskott/dag</p></div>
+</div></GC>
+
+{SUPPS.map(function(w){
+return <GC key={w.id}>
+<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8}}>
+<div style={{width:36,height:36,borderRadius:10,background:"rgba(167,139,250,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{w.icon}</div>
+<div><p style={{fontSize:13,fontWeight:700}}>{w.label}</p><p style={{fontSize:10,color:"#a78bfa"}}>{w.time}{w.id==="07_morgon"?" — fastande":w.id==="12_middag"?" — med mat":w.id==="16_pwo"?" — 30 min före":w.id==="20_kvall"?" — med kvällsmål":w.id==="22_natt"?" — före sömn":""}</p></div>
+</div>
+<div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+{w.items.map(function(item,i){
+return <div key={i} style={{padding:"6px 10px",borderRadius:8,background:"rgba(167,139,250,0.06)",border:"1px solid rgba(167,139,250,0.12)",fontSize:11,color:C.m}}>{item}</div>})}
+</div></GC>})}
+</div>}
+</div>}
+
+function KroppTab(){
+var ss=h("history"),sub=ss[0],setSub=ss[1];
+return <div>
+<h1 style={{fontSize:24,fontWeight:700,marginBottom:12}}>📊 Kropp</h1>
+<div style={{display:"flex",gap:4,marginBottom:14}}>
+{[{k:"history",l:"Historik"},{k:"body",l:"Mått & Foton"}].map(function(t){
+return <button key={t.k} onClick={function(){setSub(t.k)}} style={{flex:1,padding:"8px 0",borderRadius:8,border:sub===t.k?"1px solid "+C.cy:"1px solid "+C.b,background:sub===t.k?"rgba(0,212,255,0.1)":C.b,color:sub===t.k?C.cy:C.s,fontSize:11,fontWeight:600}}>{t.l}</button>})}
+</div>
+
+{sub==="history"&&<HistoryTab/>}
+{sub==="body"&&<BodyTab/>}
+</div>}
+
 function ProfileTab(p){return <div>
 <h1 style={{fontSize:24,fontWeight:700,marginBottom:20}}>⚙️ Profil</h1>
 <GC><p style={{fontSize:12,fontWeight:600,color:C.s,marginBottom:10}}>CYKEL-VECKA</p>
@@ -892,12 +1220,12 @@ return <div key={i} style={{display:"flex",justifyContent:"space-between",alignI
 </GC>})()}
 <GC><p style={{fontSize:12,fontWeight:600,color:C.s,marginBottom:8}}>PROFIL</p>
 <div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Vikt</span><span style={{fontSize:13,fontWeight:700}}>72 kg</span></div>
-<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Protein-mål</span><span style={{fontSize:13,fontWeight:700}}>160g/dag</span></div>
-<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Kalorier</span><span style={{fontSize:13,fontWeight:700}}>2200-2400 kcal</span></div>
+<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Protein-mål</span><span style={{fontSize:13,fontWeight:700}}>170g/dag</span></div>
+<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Kalorier</span><span style={{fontSize:13,fontWeight:700}}>~2000 kcal</span></div>
 <div style={{display:"flex",justifyContent:"space-between",padding:"8px 0"}}><span style={{fontSize:13}}>MMA</span><span style={{fontSize:13,fontWeight:700}}>~6h/vecka</span></div>
 </GC>
 <GC><p style={{fontSize:12,fontWeight:600,color:C.s,marginBottom:8}}>APP</p>
-<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Version</span><span style={{fontSize:13,fontWeight:700,color:C.gr}}>V1.1</span></div>
+<div style={{display:"flex",justifyContent:"space-between",padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,0.05)"}}><span style={{fontSize:13}}>Version</span><span style={{fontSize:13,fontWeight:700,color:C.gr}}>V2.0</span></div>
 <div style={{display:"flex",justifyContent:"space-between",padding:"8px 0"}}><span style={{fontSize:13}}>Synk</span><span style={{fontSize:13,fontWeight:700,color:C.cy}}>☁️ Supabase</span></div></GC>
 </div>}
 function App(){var ts=h("today"),tab=ts[0],setTab=ts[1];
@@ -909,13 +1237,13 @@ var hist=LS("cycle_history",[]);hist.push({week:w,phase:PHASE_MAP[w],date:dk()})
 var dow=new Date().getDay();var phase=PHASE_MAP[wk];
 ue(function(){_dbLoad(function(ok){if(ok){setWkR(LS("week",1));setSyncStatus("synced")}else{setSyncStatus("local")}setLoading(false)});
 try{var ch=sb.channel('gymish-sync').on('postgres_changes',{event:'*',schema:'public',table:'health_data',filter:'id=eq.gymish'},function(payload){if(!_dbSkip&&payload.new&&payload.new.data){var d=payload.new.data;Object.keys(d).forEach(function(k){try{localStorage.setItem("gymish_"+k,JSON.stringify(d[k]))}catch(e){}});setWkR(LS("week",1));setSyncStatus("synced")}}).subscribe();return function(){sb.removeChannel(ch)}}catch(e){}},[]);
-var tabs=[{id:"today",i:"🏠",l:"Idag"},{id:"program",i:"📋",l:"Program"},{id:"history",i:"📊",l:"Historik"},{id:"body",i:"💪",l:"Kropp"},{id:"profile",i:"⚙️",l:"Profil"}];
+var tabs=[{id:"today",i:"🏠",l:"Idag"},{id:"program",i:"💪",l:"Träna"},{id:"kost",i:"🍽️",l:"Kost"},{id:"kropp",i:"📊",l:"Kropp"},{id:"profile",i:"⚙️",l:"Profil"}];
 if(loading)return <div style={{minHeight:"100vh",background:"#060a1f",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:12}}><div style={{fontSize:32}}>🏋️</div><p style={{color:C.s,fontSize:13}}>Laddar...</p></div>;
 return <div style={{maxWidth:430,margin:"0 auto",minHeight:"100vh",background:"linear-gradient(165deg,#060a1f 0%,#0a1029 30%,#0d1535 60%,#091228 100%)"}}><div style={{padding:"max(20px, env(safe-area-inset-top)) 16px 110px",animation:"fadeIn .3s ease-out"}}>
 {tab==="today"&&<TodayTab dow={dow} wk={wk} setWk={setWk} phase={phase}/>}
 {tab==="program"&&<ProgramTab dow={dow} wk={wk} phase={phase}/>}
-{tab==="history"&&<HistoryTab/>}
-{tab==="body"&&<BodyTab/>}
+{tab==="kost"&&<KostTab/>}
+{tab==="kropp"&&<KroppTab/>}
 {tab==="profile"&&<ProfileTab wk={wk} setWk={setWk}/>}
 </div><div style={{position:"fixed",bottom:0,left:"50%",transform:"translateX(-50%)",width:"100%",maxWidth:430,background:"rgba(6,10,31,0.97)",backdropFilter:"blur(30px)",WebkitBackdropFilter:"blur(30px)",borderTop:"1px solid rgba(255,255,255,0.06)",display:"flex",justifyContent:"space-around",padding:"8px 0 max(12px, env(safe-area-inset-bottom))",zIndex:10}}>{tabs.map(function(t){var active=tab===t.id;return <button key={t.id} onClick={function(){setTab(t.id);window.scrollTo({top:0,behavior:"smooth"})}} style={{background:"none",border:"none",color:active?C.cy:C.s,display:"flex",flexDirection:"column",alignItems:"center",gap:2,fontSize:9,fontWeight:active?700:500,padding:"6px 12px",minHeight:44,justifyContent:"center",position:"relative",transition:"color .15s"}}><span style={{fontSize:20}}>{t.i}</span>{t.l}{active&&<div style={{position:"absolute",top:0,left:"50%",transform:"translateX(-50%)",width:20,height:2,borderRadius:1,background:C.cy}}/>}</button>})}</div></div>}
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
